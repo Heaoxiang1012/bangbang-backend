@@ -56,7 +56,6 @@ def login():
         msg = '用户名或密码错误'
 
 
-
     else :
         login_user(user)
         data['token'] = current_user.get_id()
