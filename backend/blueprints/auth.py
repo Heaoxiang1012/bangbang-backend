@@ -51,10 +51,9 @@ def login():
 
     user = User.query.filter_by(username=username).first()
 
-    if user.check_password(password) == False or user is None:
+    if user is None  or user.check_password(password) == False :
         code = 1
         msg = '用户名或密码错误'
-
 
     else :
         login_user(user)
