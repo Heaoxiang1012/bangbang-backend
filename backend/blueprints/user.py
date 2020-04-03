@@ -8,7 +8,7 @@ user_bp = Blueprint('user',__name__)
 @user_bp.route('verify',methods=['POST'])
 def verify():
     uid = current_user.get_id()
-    user = User.get(uid)
+    user = User.query.get(uid)
 
     number = request.form.get('user')
     _password = request.form.get('_password')

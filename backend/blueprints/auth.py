@@ -49,7 +49,7 @@ def login():
     username = request.form.get('username')
     password = request.form.get('password')
 
-    user = User.filter_by(username=username).first()
+    user = User.query.filter_by(username=username).first()
 
     if user.check_password(password) == False or user is None:
         code = 1

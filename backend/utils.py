@@ -3,9 +3,9 @@ import json
 from .models.user import User
 
 def check_register_form(username,password,nickname,email):
-    if User.filter_by(username=username).first() != None:
+    if User.query.filter_by(username=username).first() != None:
         return 1
-    elif User.filter_by(email=email).first() != None:
+    elif User.query.filter_by(email=email).first() != None:
         return 2
     elif len(username) > 16 or len(username) < 3 :
         return 3
