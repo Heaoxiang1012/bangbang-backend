@@ -14,10 +14,13 @@ def check_register_form(username,password,nickname,email):
         return 3
     elif len(password) > 16 or len(password) < 6 :
         return 4
-    elif re.match("^.+\\\\@(\\[?)[a-zA-Z0-9\\-\\\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) == None :
+    elif re.match("^.+@(\\[?)[a-zA-Z0-9\\-\\\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) == None :
         return 5
     elif len(nickname) > 16 or len(nickname) < 3 :
         return 6
+    else:
+        return 0
+
 def check_requirements(data_json, keys):
     assert type(keys) == list
     try:
