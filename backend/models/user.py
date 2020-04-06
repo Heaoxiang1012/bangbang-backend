@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 from datetime import datetime
 
 class User(db.Model,UserMixin):
-    uid = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
 
     username = db.Column(db.String(16),unique=True,nullable=False)
     password_hash = db.Column(db.String(128))
@@ -12,6 +12,7 @@ class User(db.Model,UserMixin):
     nickname = db.Column(db.String(16),unique=True,nullable=False)
     signature = db.Column(db.String(128))
     is_verify = db.Column(db.Boolean,default=False)
+    find_passwd = db.Column(db.Integer) #用于找回密码
 
     number = db.Column(db.String(8),unique=True)
     _password = db.Column(db.String(32))

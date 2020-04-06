@@ -5,22 +5,22 @@ class BaseConfig():
     SECRET_KEY = os.getenv('SECRET_KEY','secret string')
 
     MAIL_SERVER = os.getenv('MAIL_SERVER')
-    MAIL_PORT = 465
-    MAIL_USER_SSL = True
+    MALI_PORT = 587
+    MAIL_USE_TLS = True
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
 
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    #ckeditor
-    CKEDITOR_FILE_UPLOADER ='main.upload'
     UPLOADED_PATH = os.path.join(basedir,'uploads')
     ALLOW_FILE_EXT = ['jpg','png','jpeg','gif']
-    CKEDITOR_ENABLE_CODESNIPPET = True
-    CKEDITOR_SERVE_LOCAL=True
-    CKEDITOR_HEIGHT=800
-    CKEDITOR_ENABLE_CSRF =True
-    CKEDITOR_EXTRA_PLUGINS = ['emoji']
+
+    #MSG
+    CHANGE_PASSWD = ['修改密码成功','原密码错误','密码长度必须在6-16位之间']
+    SEND_EMAIL = ['发送成功','email不存在']
+    FORGET_PASSWD = ['修改密码成功','email不存在','验证码错误', '密码长度必须在6-16位之间']
+
 
 class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir,'data-dev.db')

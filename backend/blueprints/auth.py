@@ -1,11 +1,12 @@
 import json
+import random
 
-from flask import Blueprint,request
+from flask import Blueprint,request,current_app
 from flask_login import current_user,login_user,logout_user
 
 from ..models.user import User
 from ..extensions import db
-from ..utils import check_register_form
+from ..utils import check_register_form,send_mail
 
 auth_bp = Blueprint('auth',__name__)
 
@@ -38,7 +39,7 @@ def register():
 
     return json.dumps(results)
 
-@auth_bp.route('login',methods=['POST'])
+@auth_bp.route('/login',methods=['POST'])
 def login():
     results = {}
 
@@ -64,3 +65,59 @@ def login():
     results['msg'] = msg
 
     return json.dumps(results)
+
+@auth_bp.route('/forget_password/send',methods=['POST'])
+def send_forget_password():
+    results = {}
+    email = request.form.get('email')
+    user = User.query.filter_by(email=email).first()
+    if user is None:
+        results['code'] = 1
+        results['msg'] = current_app.config['SEND_EMAIL'][1]
+    else :
+        subject = '学长帮帮忙————找回密码'
+        recipients = email
+        body = random.randint(1000,9999)
+
+        user.find_passwd = body
+        db.session.commit()
+
+        send_mail(subject,recipients,body)
+
+        results['code'] = 0
+        results['msg'] = current_app.config['SEND_EMAIL'][0]
+
+    return json.dumps(results)
+
+@auth_bp.route('/forget_password',methods=['POST'])
+def forget_password():
+    results = {}
+    email = request.form.get('email')
+    password = request.form.get('password')
+    verify_code = request.form.get('verify_code')
+
+    user = User.query.filter_by(email=email).first()
+    if user is None:
+        results['code'] = 1
+        results['msg'] = current_app.config['FORGET_PASSWD'][1]
+
+    elif verify_code != user.find_passwd:
+        results['code'] = 2
+        results['msg'] = current_app.config['FORGET_PASSWD'][2]
+
+    elif len(password)<6 and len(password)>16:
+        results['code'] = 3
+        results['msg'] = current_app.config['FORGET_PASSWD'][3]
+
+    else :
+        user.set_password(password)
+        db.session.commit()
+        results['code'] = 0
+        results['msg'] = current_app.config['FORGET_PASSWD'][0]
+
+    return json.dumps(results)
+
+
+
+
+

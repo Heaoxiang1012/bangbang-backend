@@ -1,6 +1,9 @@
 import re
 import json
+
 from .models.user import User
+from .extensions import mail
+from flask_mail import Message
 
 def check_register_form(username,password,nickname,email):
     if User.query.filter_by(username=username).first() != None:
@@ -24,3 +27,8 @@ def check_requirements(data_json, keys):
     except json.JSONDecodeError:
         pass
     return None
+
+def send_mail(subject,to,body):
+    msg = Message(subject,recipients=[to],body=body)
+    mail.send(msg)
+
