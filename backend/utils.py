@@ -5,9 +5,11 @@ from .models.user import User
 from .extensions import mail
 from flask_mail import Message
 
+
 def check_register_form(username,password,nickname,email):
+
     if User.query.filter_by(username=username).first() != None:
-        return 1
+       return 1
     elif User.query.filter_by(email=email).first() != None:
         return 2
     elif len(username) > 16 or len(username) < 3 :

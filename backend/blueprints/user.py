@@ -4,19 +4,35 @@ from flask import Blueprint,request,current_app
 from flask_login import current_user,login_user,logout_user
 from ..models.user import User
 from ..extensions import db
-
+from ..util_verify import get_name,get_marks
 
 user_bp = Blueprint('user',__name__)
 
 
-@user_bp.route('verify',methods=['POST'])
+@user_bp.route('/verify',methods=['POST'])
 def verify():
+    number = request.form.get('number')
+    _password = request.form.get('password')
+
+    id = current_user.get_id()
+    user = User.query.get(id)
+   
+    user._password = _password
+    user.number = number
+    db.session.commit()
+    results = get_name(number,_password)
+
+    return json.dumps(results)
+
+
+@user_bp.route('/grade',methods=['GET'])
+def grade():
     id = current_user.get_id()
     user = User.query.get(id)
 
-    number = request.form.get('user')
-    _password = request.form.get('_password')
+    results = get_marks(id,user.number,user._password)
 
+    return json.dumps(results)
 
 @user_bp.route('/change_password',methods=['POST'])
 def change_password():
