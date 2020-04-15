@@ -97,5 +97,3 @@ def get_marks(uid,muser,passwd):
 
     return results
 
-
-

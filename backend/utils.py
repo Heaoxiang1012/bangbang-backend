@@ -1,10 +1,17 @@
 import re
 import json
+import os
+import uuid
 
 from .models.user import User
 from .extensions import mail
 from flask_mail import Message
 
+
+def random_filename(old_filename):
+    ext = os.path.splitext(old_filename)[1]
+    new_filename = uuid.uuid4().hex + ext
+    return new_filename
 
 def check_register_form(username,password,nickname,email):
 

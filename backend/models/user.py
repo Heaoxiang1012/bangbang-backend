@@ -13,9 +13,12 @@ class User(db.Model,UserMixin):
     signature = db.Column(db.String(128))
     is_verify = db.Column(db.Boolean,default=False)
     find_passwd = db.Column(db.Integer) #用于找回密码
+    avatar = db.Column(db.String(64))
 
     number = db.Column(db.String(8),unique=True)
     _password = db.Column(db.String(128))
+
+
 
     def set_password(self,password):
         self.password_hash=generate_password_hash(password)

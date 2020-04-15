@@ -1,10 +1,14 @@
 import json
+import os
 
-from flask import Blueprint,request,current_app
+
+from flask import Blueprint,request,current_app,send_from_directory
 from flask_login import current_user,login_user,logout_user
 from ..models.user import User
 from ..extensions import db
 from ..util_verify import get_name,get_marks
+from ..utils import random_filename
+
 
 user_bp = Blueprint('user',__name__)
 
@@ -58,6 +62,91 @@ def change_password():
         db.session.commit()
 
     return json.dumps(results)
+
+@user_bp.route('/profile',methods=['GET'])
+def profile():
+    results = {}
+
+    id = current_user.get_id()
+    user = User.query.get(id)
+
+    data = {
+        'uid' : id,
+        'username' : user.username,
+        'email' : user.email,
+        'nickname' : user.nickname,
+        'signature' : user.signature
+    }
+
+    results['code'] = 0
+    results['msg'] = '获取资料成功'
+    results['data'] = data
+
+    return json.dumps(results)
+
+@user_bp.route('/profile',methods=['POST'])
+def set_profile():
+    results = {}
+    nickname = request.form.get('nickname')
+    signature = request.form.get('signature')
+
+    id = current_user.get_id()
+    user = User.query.get(id)
+
+    user.signature = signature
+    user.nickname = nickname
+
+    db.session.commit()
+
+    results['code'] = 0
+    results['msg'] = '修改成功'
+
+    return json.dumps(results)
+
+@user_bp.route('/avatar/<uid>',method=['GET'])
+def get_avatar(uid):
+
+    if uid == None :
+        uid = current_user.get_id()
+
+    user = User.query.get(uid)
+
+    filename = user.avatar
+
+    return send_from_directory(current_app.config['AVATAR_PATH'],filename)
+
+
+@user_bp.route('/avatar',method=['POST'])
+def set_avatar():
+    results = {}
+    f = request.files.get('avatar')
+
+    id = current_user.get_id()
+    user = User.query.get(id)
+
+    filename = random_filename(f.filename)
+    f.save(os.path.join(current_app.config['AVATAR_PATH'], filename))
+
+    user.avatar = filename
+
+    results['code'] = 0
+    results['msg'] = '修改成功'
+
+    return  json.dumps(results)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
