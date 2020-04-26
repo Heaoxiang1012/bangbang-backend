@@ -15,18 +15,22 @@ user_bp = Blueprint('user',__name__)
 
 @user_bp.before_request
 def login_project():
+
     result = {}
+
     if current_user.is_authenticated == False:
         result['code'] = -1
         result['msg'] = '您当前未登录！'
+        return json.dumps(result)
+   
     else :
-        id = current_user.get_id()
+        id =current_user.get_id()
         user = User.query.get(id)
 
         if user.is_verify == False:
             result['code'] = -2
             result['msg'] = '请先实名制认证！'
-    return json.dumps(result)
+            return json.dumps(result)
 
 
 @user_bp.route('/grade',methods=['GET'])
