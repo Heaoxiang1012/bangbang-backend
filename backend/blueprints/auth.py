@@ -134,6 +134,7 @@ def verify():
 
     user._password = _password
     user.number = number
+    user.is_verify = True
     db.session.commit()
     results = get_name(number, _password)
 
