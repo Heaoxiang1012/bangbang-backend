@@ -32,7 +32,6 @@ def login_project():
         if current_user.is_authenticated == False:
             result['code'] = -1
             result['msg'] = '您当前未登录！'
-            result['ext'] = ext
             return json.dumps(result)
 
         else :
