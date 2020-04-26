@@ -20,6 +20,7 @@ def login_project():
     ext = request.path
     flag = False
 
+
     for i in route :
         if i in ext :
             flag = True
@@ -117,7 +118,7 @@ def set_profile():
 
     return json.dumps(results)
 
-@user_bp.route('/avatar/<uid>',methods=['GET'])
+@user_bp.route('/avatar/<int:uid>',methods=['GET'])
 def get_avatar(uid):
 
     if uid == None :
