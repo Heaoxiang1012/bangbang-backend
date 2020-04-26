@@ -15,22 +15,34 @@ user_bp = Blueprint('user',__name__)
 
 @user_bp.before_request
 def login_project():
+    route = ['avatar','profile']
+    method = request.method
+    ext = request.path
+    flag = False
 
-    result = {}
+    for i in route :
+        if i in ext :
+            flag = True
 
-    if current_user.is_authenticated == False:
-        result['code'] = -1
-        result['msg'] = '您当前未登录！'
-        return json.dumps(result)
-   
+    if method == 'GET' and flag :
+        pass
+
     else :
-        id =current_user.get_id()
-        user = User.query.get(id)
-
-        if user.is_verify == False:
-            result['code'] = -2
-            result['msg'] = '请先实名制认证！'
+        result = {}
+        if current_user.is_authenticated == False:
+            result['code'] = -1
+            result['msg'] = '您当前未登录！'
+            result['ext'] = ext
             return json.dumps(result)
+
+        else :
+            id =current_user.get_id()
+            user = User.query.get(id)
+
+            if user.is_verify == False:
+                result['code'] = -2
+                result['msg'] = '请先实名制认证！'
+                return json.dumps(result)
 
 
 @user_bp.route('/grade',methods=['GET'])
@@ -67,15 +79,14 @@ def change_password():
 
     return json.dumps(results)
 
-@user_bp.route('/profile',methods=['GET'])
-def profile():
+@user_bp.route('/profile/<int:uid>',methods=['GET'])
+def profile(uid):
     results = {}
 
-    id = current_user.get_id()
-    user = User.query.get(id)
+    user = User.query.get(uid)
 
     data = {
-        'uid' : int(id),
+        'uid' : int(uid),
         'username' : user.username,
         'email' : user.email,
         'nickname' : user.nickname,
@@ -133,7 +144,7 @@ def set_avatar():
 
     user.avatar = filename
 
-    db.session.commit(user)
+    db.session.commit()
 
     results['code'] = 0
     results['msg'] = '修改成功'
