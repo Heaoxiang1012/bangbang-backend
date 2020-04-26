@@ -14,34 +14,19 @@ user_bp = Blueprint('user',__name__)
 
 
 @user_bp.before_request
-
 def login_project():
     result = {}
     if current_user.is_authenticated == False:
         result['code'] = -1
+        result['msg'] = '您当前未登录！'
     else :
         id = current_user.get_id()
         user = User.query.get(id)
 
         if user.is_verify == False:
             result['code'] = -2
-
+            result['msg'] = '请先实名制认证！'
     return json.dumps(result)
-
-@user_bp.route('/verify',methods=['POST'])
-def verify():
-    number = request.form.get('number')
-    _password = request.form.get('password')
-
-    id = current_user.get_id()
-    user = User.query.get(id)
-   
-    user._password = _password
-    user.number = number
-    db.session.commit()
-    results = get_name(number,_password)
-
-    return json.dumps(results)
 
 
 @user_bp.route('/grade',methods=['GET'])

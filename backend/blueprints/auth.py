@@ -7,6 +7,7 @@ from flask_login import current_user,login_user,logout_user
 from ..models.user import User
 from ..extensions import db
 from ..utils import check_register_form,send_mail
+from ..util_verify import get_name
 
 auth_bp = Blueprint('auth',__name__)
 
@@ -117,7 +118,26 @@ def forget_password():
 
     return json.dumps(results)
 
+@auth_bp.route('/verify', methods=['POST'])
+def verify():
+    if current_user.is_authenticated == False:
+        results = {}
+        results['code'] = -1
+        results['msg'] = '您当前未登录！'
+        return json.dumps(results)
 
+    number = request.form.get('number')
+    _password = request.form.get('password')
+
+    id = current_user.get_id()
+    user = User.query.get(id)
+
+    user._password = _password
+    user.number = number
+    db.session.commit()
+    results = get_name(number, _password)
+
+    return json.dumps(results)
 
 
 
