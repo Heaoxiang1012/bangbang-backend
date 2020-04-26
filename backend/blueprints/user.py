@@ -13,6 +13,21 @@ from ..utils import random_filename
 user_bp = Blueprint('user',__name__)
 
 
+@user_bp.before_request
+
+def login_project():
+    result = {}
+    if current_user.is_authenticated == False:
+        result['code'] = -1
+    else :
+        id = current_user.get_id()
+        user = User.query.get(id)
+
+        if user.is_verify == False:
+            result['code'] = -2
+
+    return json.dumps(result)
+
 @user_bp.route('/verify',methods=['POST'])
 def verify():
     number = request.form.get('number')
@@ -71,7 +86,7 @@ def profile():
     user = User.query.get(id)
 
     data = {
-        'uid' : id,
+        'uid' : int(id),
         'username' : user.username,
         'email' : user.email,
         'nickname' : user.nickname,
@@ -103,7 +118,7 @@ def set_profile():
 
     return json.dumps(results)
 
-@user_bp.route('/avatar/<uid>',method=['GET'])
+@user_bp.route('/avatar/<uid>',methods=['GET'])
 def get_avatar(uid):
 
     if uid == None :
@@ -116,7 +131,7 @@ def get_avatar(uid):
     return send_from_directory(current_app.config['AVATAR_PATH'],filename)
 
 
-@user_bp.route('/avatar',method=['POST'])
+@user_bp.route('/avatar',methods=['POST'])
 def set_avatar():
     results = {}
     f = request.files.get('avatar')
@@ -129,13 +144,12 @@ def set_avatar():
 
     user.avatar = filename
 
+    db.session.commit(user)
+
     results['code'] = 0
     results['msg'] = '修改成功'
 
     return  json.dumps(results)
-
-
-
 
 
 

@@ -13,6 +13,8 @@ def random_filename(old_filename):
     new_filename = uuid.uuid4().hex + ext
     return new_filename
 
+
+
 def check_register_form(username,password,nickname,email):
 
     if User.query.filter_by(username=username).first() != None:
