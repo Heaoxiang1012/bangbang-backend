@@ -6,7 +6,7 @@ from flask import Blueprint,request,current_app,send_from_directory
 from flask_login import current_user,login_user,logout_user
 from ..models.user import User
 from ..extensions import db
-from ..util_verify import get_name,get_marks
+from ..util_verify import get_marks
 from ..utils import random_filename
 
 

@@ -18,6 +18,7 @@ class User(db.Model,UserMixin):
     number = db.Column(db.String(8),unique=True)
     _password = db.Column(db.String(128))
 
+    helps = db.relationship('Help',back_populates='user') #用户发布的辅导
 
 
     def set_password(self,password):
@@ -25,3 +26,4 @@ class User(db.Model,UserMixin):
 
     def check_password(self,password):
         return check_password_hash(self.password_hash,password)
+
