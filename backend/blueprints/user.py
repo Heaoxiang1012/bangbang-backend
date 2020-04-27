@@ -79,9 +79,13 @@ def change_password():
 
     return json.dumps(results)
 
+@user_bp.route('/profile',methods=['GET'])
 @user_bp.route('/profile/<int:uid>',methods=['GET'])
-def profile(uid):
+def profile(uid=-1):
     results = {}
+
+    if uid == -1 :
+        uid = current_user.get_id()
 
     user = User.query.get(uid)
 
@@ -118,6 +122,7 @@ def set_profile():
 
     return json.dumps(results)
 
+@user_bp.route('/avatar',methods=['GET'])
 @user_bp.route('/avatar/<int:uid>',methods=['GET'])
 def get_avatar(uid):
 
