@@ -127,12 +127,15 @@ def search():
             for help in helps:
                 if i in help.major:
                     if help not in Data :
+                        type = 'course'
+                        if help.type == True :
+                            type = 'skill'
 
                         d = {
                             "publisher_id": help.user_id,
                             "help_id": help.id,
                             'publisher_nickname' : help.user.nickname,
-                            'type' : help.type,
+                            'type' : type,
                             'name'  : help.major,
                             'price' : help.price,
                             'declaration' : help.declaration,
