@@ -130,6 +130,7 @@ def search():
 
                         d = {
                             "publisher_id": help.user_id,
+                            "help_id": help.id,
                             'publisher_nickname' : help.user.nickname,
                             'type' : help.type,
                             'name'  : help.major,
