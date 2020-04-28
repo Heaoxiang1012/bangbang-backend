@@ -10,7 +10,7 @@ class User(db.Model,UserMixin):
     password_hash = db.Column(db.String(128))
     email = db.Column(db.String(256),unique=True,nullable=False)
     nickname = db.Column(db.String(16),unique=True,nullable=False)
-    signature = db.Column(db.String(128))
+    signature = db.Column(db.String(128),default='这个人很懒，什么都没留下。')
     is_verify = db.Column(db.Boolean,default=False)
     find_passwd = db.Column(db.Integer) #用于找回密码
     avatar = db.Column(db.String(64))

@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 
 help_bp = Blueprint('help',__name__)
 
-#@help_bp.before_request
+@help_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar']
     method = request.method
@@ -112,3 +112,39 @@ def glance(id):
 
     return json.dumps(results)
 
+@help_bp.route('/search',methods=['GET'])
+def search():
+    results = {}
+    Data = []
+    data = []
+    word = request.args.get('word')
+    helps = Help.query.order_by(Help.release_date.desc()).all()
+
+
+    if word != None :
+
+        for i in word :
+            for help in helps:
+                if i in help.major:
+                    if help not in Data :
+
+                        d = {
+                            "publisher_id": help.user_id,
+                            'publisher_nickname' : help.user.nickname,
+                            'type' : help.type,
+                            'name'  : help.major,
+                            'price' : help.price,
+                            'declaration' : help.declaration,
+                        }
+
+                        if help.type == False :
+                            d['course_score'] = help.grade
+
+                        Data.append(help)
+                        data.append(d)
+
+        results['code'] = 0
+        results['msg'] = "查找成功"
+        results['data'] = data
+
+    return json.dumps(results)
