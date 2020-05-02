@@ -225,6 +225,7 @@ def booklist():
 
     for help in helps:
         d = {}
+        d['help_id'] = help.id
         d['name'] = help.major
         orders = help.orders
         book_name = []
