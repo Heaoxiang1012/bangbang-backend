@@ -97,7 +97,8 @@ def glance(id):
         "type": type,
         "name": help.major,
         "price": help.price,
-        "declaration": help.declaration
+        "declaration": help.declaration,
+        "release_time": help.release_date.strftime('%Y-%m-%d'),
     }
 
     if help.type == True :

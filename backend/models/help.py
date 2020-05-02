@@ -25,7 +25,7 @@ class Order(db.Model):
      id = db.Column(db.Integer,primary_key=True)
      date = db.Column(db.TIMESTAMP,nullable=False) # 预约发起时间
      state = db.Column(db.Boolean,nullable=False,default=False) # 是否同意预约（0/1）
-     is_pay = db.Column(db.String(2),nullable=False,default='否')
+     is_pay = db.Column(db.Boolean,nullable=False,default=False)
 
      help_id = db.Column(db.Integer,db.ForeignKey('help.id')) # 外键，关联辅导表
      be_user_id = db.Column(db.Integer,db.ForeignKey('user.id')) # 外键,发起预约人的id
