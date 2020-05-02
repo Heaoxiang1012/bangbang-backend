@@ -3,7 +3,7 @@ from datetime import datetime
 
 from flask import Blueprint,request,current_app,send_from_directory
 from flask_login import current_user,login_user,logout_user
-from ..models.help import Help
+from ..models.help import Help,Order
 from ..extensions import db
 from ..models.user import User
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -152,3 +152,126 @@ def search():
         results['data'] = data
 
     return json.dumps(results)
+
+@help_bp.route('/released',methods=['GET'])
+def released():
+    results = {}
+    data = []
+    id = current_user.get_id()
+    user = User.query.get(id)
+    helps = user.helps
+
+    for help in helps:
+        d = {}
+        d['help_id'] = int(help.id)
+        d['publisher_name'] = help.user.nickname
+        if help.type == True:
+            d['type'] = 'skill'
+        else :
+            d['type'] = 'course'
+            d['course_score'] = help.grade
+
+        d['name'] = help.major
+        d['declaration'] = help.declaration
+        d['release_time'] =help.release_date.strftime('%Y-%m-%d')
+        data.append(d)
+
+    results['code'] = 0
+    results['msg'] = '查看成功'
+    results['data'] = data
+
+    return json.dumps(results)
+
+@help_bp.route('/<int:id>',methods=['POST'])
+def book(id):
+    results = {}
+    help = Help.query.get(id)
+    uid = current_user.get_id()
+    user = User.query.get(uid)
+
+    #防止重复预约
+    if user.orders != None :
+        for item in user.orders :
+            if item.help_id == id :
+                results['code'] = 1
+                results['msg'] = '请勿重复预约'
+                return json.dumps(results)
+
+    order = Order(
+        date = datetime.today(),
+        help_id = id,
+        be_user_id = uid,
+        help = help,
+        be_user = user
+    )
+
+    db.session.add(order)
+    db.session.commit()
+
+    results['code'] = 0
+    results['msg'] = '预约成功'
+
+    return json.dumps(results)
+
+
+@help_bp.route('/booklist',methods=['GET'])
+def booklist():
+    results = {}
+    data = []
+    id = current_user.get_id()
+    user = User.query.get(id)
+    helps = user.helps
+
+    for help in helps:
+        d = {}
+        d['name'] = help.major
+        orders = help.orders
+        book_name = []
+        for item in orders :
+            book_name.append(item.be_user.nickname)
+        d["book_nickname"] = book_name
+        data.append(d)
+
+    results['code'] = 0
+    results['msg'] = '查看成功'
+    results['data'] = data
+
+    return json.dumps(results)
+
+
+@help_bp.route('/record',methods=['GET'])
+def record():
+    results = {}
+    data = []
+
+    id = current_user.get_id()
+    user = User.query.get(id)
+    orders = user.orders
+
+    for order in orders:
+        help = order.help
+        if help!=None:
+            type = 'course'
+            if type == True:
+                type = 'skill'
+            d = {
+                "help_id" : help.id,
+                "publisher_name" : help.user.nickname,
+                "type" : type,
+                "name" : help.major,
+                "price" : help.price,
+                "release_time" : help.release_date.strftime('%Y-%m-%d'),
+                "is_pay" : order.is_pay
+            }
+
+            data.append(d)
+    results['code'] = 0
+    results['msg'] = '查看成功'
+    results['data'] = data
+
+
+    return json.dumps(results)
+
+
+
+

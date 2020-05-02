@@ -5,7 +5,7 @@ from .blueprints.auth import auth_bp
 from .blueprints.user import user_bp
 from .blueprints.help import help_bp
 from .extensions import db,login_manager,mail
-from .models.help import Help
+from .models.help import Help,Order
 from .models.user import User
 
 import os
@@ -43,7 +43,7 @@ def register_commands(app):
 def register_shell_context(app):
     @app.shell_context_processor
     def make_shell_context():
-        return dict(db=db,User=User,Help=Help)
+        return dict(db=db,User=User,Help=Help,Order=Order)
 
 
 

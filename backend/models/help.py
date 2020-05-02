@@ -17,18 +17,23 @@ class Help(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id')) # 设置外键，关联用户表
     user = db.relationship('User',back_populates='helps') #用户发布的辅导
+    orders = db.relationship('Order',back_populates='help')
 
-'''
 
 # 预约信息表
 class Order(db.Model):
      id = db.Column(db.Integer,primary_key=True)
      date = db.Column(db.TIMESTAMP,nullable=False) # 预约发起时间
-     state = db.Column(db.Integer,nullable=False) # 是否同意预约（0/1）
+     state = db.Column(db.Boolean,nullable=False,default=False) # 是否同意预约（0/1）
+     is_pay = db.Column(db.String(2),nullable=False,default='否')
 
-     help_id = db.Column(db.Integer,db.ForeignKey('Help.id')) # 外键，关联辅导表
-     user_id = db.Column(db.Integer,db.ForeignKey('User.id')) # 外键，关联用户表
+     help_id = db.Column(db.Integer,db.ForeignKey('help.id')) # 外键，关联辅导表
+     be_user_id = db.Column(db.Integer,db.ForeignKey('user.id')) # 外键,发起预约人的id
 
+     help = db.relationship('Help',back_populates='orders')  #预约的辅导
+     be_user = db.relationship('User',back_populates='orders')  #预约的人
+
+'''
 # 评价表
 class Comment(db.Model):
     id = db.Column(db.Integer,primary_key=True)

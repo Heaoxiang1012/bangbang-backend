@@ -19,7 +19,7 @@ class User(db.Model,UserMixin):
     _password = db.Column(db.String(128))
 
     helps = db.relationship('Help',back_populates='user') #用户发布的辅导
-
+    orders = db.relationship('Order',back_populates='be_user') #发起的预约
 
     def set_password(self,password):
         self.password_hash=generate_password_hash(password)
