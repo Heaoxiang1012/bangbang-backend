@@ -183,17 +183,18 @@ def released():
 
     return json.dumps(results)
 
+@help_bp.route('/reserve/<int:id>',methods=['POST'])
 @help_bp.route('/<int:id>',methods=['POST'])
 def book(id):
     results = {}
     help = Help.query.get(id)
-    uid = current_user.get_id()
+    uid = 2#current_user.get_id()
     user = User.query.get(uid)
 
     #防止重复预约
     if user.orders != None :
         for item in user.orders :
-            if item.help_id == id and item.is_pay == True:
+            if item.help_id == id and item.is_pay == False:
                 results['code'] = 1
                 results['msg'] = '请勿重复预约'
                 return json.dumps(results)
@@ -224,7 +225,7 @@ def book(id):
 def booklist():
     results = {}
     data = []
-    id = current_user.get_id()
+    id = 1#current_user.get_id()
     user = User.query.get(id)
     helps = user.helps
 
@@ -316,4 +317,3 @@ def cancel():
 
     return json.dumps(results)
 
-@
