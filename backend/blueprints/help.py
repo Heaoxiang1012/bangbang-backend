@@ -230,8 +230,11 @@ def booklist():
         orders = help.orders
         book_name = []
         for item in orders :
-            book_name.append(item.be_user.nickname)
-        d["book_nickname"] = book_name
+            dd = {}
+            dd['uid'] = item.be_user.id
+            dd['nickname'] = item.be_user.nickname
+            book_name.append(dd)
+        d["book_userlist"] = book_name
         data.append(d)
 
     results['code'] = 0
@@ -258,7 +261,8 @@ def record():
                 type = 'skill'
             d = {
                 "help_id" : help.id,
-                "publisher_name" : help.user.nickname,
+                "publisher_nickname" : help.user.nickname,
+                "publisher_id": help.user.id,
                 "type" : type,
                 "name" : help.major,
                 "price" : help.price,
