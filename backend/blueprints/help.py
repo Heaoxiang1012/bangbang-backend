@@ -3,7 +3,7 @@ from datetime import datetime
 
 from flask import Blueprint,request,current_app,send_from_directory
 from flask_login import current_user,login_user,logout_user
-from ..models.help import Help,Order
+from ..models.help import Help,Order,Comment
 from ..extensions import db
 from ..models.user import User
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 
 help_bp = Blueprint('help',__name__)
 
-@help_bp.before_request   #!@#!@#
+#@help_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar']
     method = request.method
@@ -305,7 +305,7 @@ def agree():
 def cancel():
     results = {}
     help_id = request.form.get('help_id')
-    user_id = request.form.get('user_id')
+    user_id = current_user.get_id()
 
     order = Order.query.filter_by(help_id=help_id,be_user_id=user_id).order_by(Order.date.desc()).first()
 
@@ -316,4 +316,59 @@ def cancel():
     results['msg'] = '取消预约成功'
 
     return json.dumps(results)
+
+@help_bp.route('/comment',methods=['POST'])
+def comment():
+    results = {}
+
+    help_id = request.form.get('help_id')
+    be_user_id = request.form.get('user_id') #被评价人
+    text = request.form.get('text')
+
+    user_id = current_user.get_id()
+
+    comment = Comment(
+        help_id = help_id,
+        user_id = user_id,
+        be_user_id = be_user_id,
+        text = text,
+        date = datetime.today()
+    )
+
+    db.session.add(comment)
+    db.session.commit()
+
+    results['code'] = 0
+    results['msg'] = '评价成功'
+
+    return json.dumps(results)
+
+@help_bp.route('/mycomment',methods=['GET'])
+def my_comment():
+    results= {}
+    data = []
+    uid = current_user.get_id()
+    comments = Comment.query.filter_by(be_user_id=uid).order_by(Comment.date.desc()).all()
+
+
+    if comments != None :
+        for comment in comments:
+            d = {
+                "help_id" : comment.help_id,
+                "user_id" : comment.user_id,
+                "text" : comment.text,
+                "date" : comment.date.strftime('%Y-%m-%d'),
+            }
+            data.append(d)
+
+    results['code'] = 0
+    results['msg'] = '查看成功'
+    results['data'] = data
+
+    return json.dumps(results)
+
+
+
+
+
 

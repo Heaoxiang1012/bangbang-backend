@@ -20,7 +20,6 @@ class User(db.Model,UserMixin):
 
     helps = db.relationship('Help',back_populates='user') #用户发布的辅导
     orders = db.relationship('Order',back_populates='be_user') #发起的预约
-    comments = db.relationship('Comment',back_populates='user')  #预约的辅导
 
 
     def set_password(self,password):

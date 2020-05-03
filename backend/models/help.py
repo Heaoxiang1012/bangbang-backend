@@ -39,10 +39,12 @@ class Order(db.Model):
 class Comment(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     text = db.Column(db.Text,nullable=False) # 评价内容
+    date = db.Column(db.TIMESTAMP, nullable=False)
 
     help_id = db.Column(db.Integer,db.ForeignKey('help.id')) # 外键，关联辅导表
-    user_id = db.Column(db.Integer,db.ForeignKey('user.id')) # 外键，关联预约信息表
+    user_id = db.Column(db.Integer,db.ForeignKey('user.id')) # 外键，评价人id
+    be_user_id = db.Column(db.Integer,db.ForeignKey('user.id')) # 外键，被评价人id
 
     help = db.relationship('Help',back_populates='comments')  #预约的辅导
-    user = db.relationship('User',back_populates='comments')  #预约的辅导
+
 
