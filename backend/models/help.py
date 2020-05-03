@@ -44,7 +44,6 @@ class Comment(db.Model):
 
     help_id = db.Column(db.Integer,db.ForeignKey('help.id')) # 外键，关联辅导表
     user_id = db.Column(db.Integer,db.ForeignKey('user.id')) # 外键，评价人id
-    be_user_id = db.Column(db.Integer,db.ForeignKey('user.id')) # 外键，被评价人id
 
     help = db.relationship('Help',back_populates='comments')  #预约的辅导
 

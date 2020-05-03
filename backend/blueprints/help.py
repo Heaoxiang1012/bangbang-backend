@@ -347,7 +347,6 @@ def comment():
     results = {}
 
     help_id = request.form.get('help_id')
-    be_user_id = request.form.get('user_id') #被评价人
     text = request.form.get('text')
 
     user_id = current_user.get_id()
@@ -355,7 +354,6 @@ def comment():
     comment = Comment(
         help_id = help_id,
         user_id = user_id,
-        be_user_id = be_user_id,
         text = text,
         date = datetime.today()
     )
