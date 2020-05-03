@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 
 help_bp = Blueprint('help',__name__)
 
-@help_bp.before_request   #!@#!@#
+#@help_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar']
     method = request.method
@@ -193,10 +193,15 @@ def book(id):
     #防止重复预约
     if user.orders != None :
         for item in user.orders :
-            if item.help_id == id :
+            if item.help_id == id and item.is_pay == True:
                 results['code'] = 1
                 results['msg'] = '请勿重复预约'
                 return json.dumps(results)
+
+    if help.user_id == uid :
+        results['code'] = 2
+        results['msg'] = '不能预约用户自己发起的辅导！'
+        return json.dumps(results)
 
     order = Order(
         date = datetime.today(),
@@ -230,10 +235,11 @@ def booklist():
         orders = help.orders
         book_name = []
         for item in orders :
-            dd = {}
-            dd['uid'] = item.be_user.id
-            dd['nickname'] = item.be_user.nickname
-            book_name.append(dd)
+            if item.state == False :
+                dd = {}
+                dd['uid'] = item.be_user.id
+                dd['nickname'] = item.be_user.nickname
+                book_name.append(dd)
         d["book_userlist"] = book_name
         data.append(d)
 
@@ -278,6 +284,36 @@ def record():
 
     return json.dumps(results)
 
+@help_bp.route('/agree',methods=['POST'])
+def agree():
+    results = {}
+    help_id = request.form.get('help_id')
+    user_id = request.form.get('user_id')
 
+    order = Order.query.filter_by(help_id=help_id,be_user_id=user_id).order_by(Order.date.desc()).first()
 
+    order.state = True
 
+    db.session.commit()
+    results['code'] = 0
+    results['msg'] = '同意预约成功'
+
+    return json.dumps(results)
+
+@help_bp.route('/cancel',methods=['POST'])
+def cancel():
+    results = {}
+    help_id = request.form.get('help_id')
+    user_id = request.form.get('user_id')
+
+    order = Order.query.filter_by(help_id=help_id,be_user_id=user_id).order_by(Order.date.desc()).first()
+
+    db.session.delete(order)
+    db.session.commit()
+
+    results['code'] = 0
+    results['msg'] = '取消预约成功'
+
+    return json.dumps(results)
+
+@
