@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 
 help_bp = Blueprint('help',__name__)
 
-#@help_bp.before_request   #!@#!@#
+@help_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar']
     method = request.method
@@ -188,7 +188,7 @@ def released():
 def book(id):
     results = {}
     help = Help.query.get(id)
-    uid = 2#current_user.get_id()
+    uid = current_user.get_id()
     user = User.query.get(uid)
 
     #防止重复预约
@@ -225,7 +225,7 @@ def book(id):
 def booklist():
     results = {}
     data = []
-    id = 1#current_user.get_id()
+    id = current_user.get_id()
     user = User.query.get(id)
     helps = user.helps
 

@@ -19,6 +19,7 @@ class Help(db.Model):
     user = db.relationship('User',back_populates='helps') #用户发布的辅导
     orders = db.relationship('Order',back_populates='help')
 
+    comments = db.relationship('Comment',back_populates='help')  #预约的辅导
 
 # 预约信息表
 class Order(db.Model):
@@ -33,13 +34,15 @@ class Order(db.Model):
      help = db.relationship('Help',back_populates='orders')  #预约的辅导
      be_user = db.relationship('User',back_populates='orders')  #预约的人
 
-'''
+
 # 评价表
 class Comment(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     text = db.Column(db.Text,nullable=False) # 评价内容
 
-    help_id = db.Column(db.Integer,db.ForeignKey('Help.id')) # 外键，关联辅导表
-    order_id = db.Column(db.Integer,db.ForeignKey('Order.id')) # 外键，关联预约信息表
+    help_id = db.Column(db.Integer,db.ForeignKey('help.id')) # 外键，关联辅导表
+    user_id = db.Column(db.Integer,db.ForeignKey('user.id')) # 外键，关联预约信息表
 
-'''
+    help = db.relationship('Help',back_populates='comments')  #预约的辅导
+    user = db.relationship('User',back_populates='comments')  #预约的辅导
+
