@@ -12,6 +12,7 @@ class Help(db.Model):
     major = db.Column(db.String(50), nullable=False)  # 辅导课程名
     price = db.Column(db.Float, default=0.00)  # 价格，可为空
     grade = db.Column(db.String(8), nullable=False)  # 辅导者该课程绩点
+    status = db.Column(db.Boolean,default=False) #辅导状态 TRUE 下架状态
 
     release_date = db.Column(db.TIMESTAMP, nullable=False)  # 辅导信息发布日期
 

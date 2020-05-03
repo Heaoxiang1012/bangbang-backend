@@ -204,6 +204,10 @@ def book(id):
         results['msg'] = '不能预约用户自己发起的辅导！'
         return json.dumps(results)
 
+    if help.status == True :
+        results['code'] = 3
+        results['msg'] = '该辅导已下架！'
+
     order = Order(
         date = datetime.today(),
         help_id = id,
@@ -317,6 +321,27 @@ def cancel():
 
     return json.dumps(results)
 
+@help_bp.route('/remove',methods=['POST'])
+def remove():
+    results={}
+    help_id = request.form.get('help_id')
+
+    help = Help.query.get(help_id)
+
+    uid = current_user.get_id()
+
+    if help.user_id == uid:
+        help.status = True
+        db.session.commit()
+        results['code'] = 0
+        results['msg'] = '下架成功'
+
+    else :
+        results['code'] = -1
+        results['msg'] = '非法操作'
+
+    return json.dumps(results)
+
 @help_bp.route('/comment',methods=['POST'])
 def comment():
     results = {}
@@ -348,14 +373,12 @@ def my_comment():
     results= {}
     data = []
     uid = current_user.get_id()
-    comments = Comment.query.filter_by(be_user_id=uid).order_by(Comment.date.desc()).all()
-
+    comments = Comment.query.filter_by(user_id=uid).order_by(Comment.date.desc()).all() #评价人是我的
 
     if comments != None :
         for comment in comments:
             d = {
                 "help_id" : comment.help_id,
-                "user_id" : comment.user_id,
                 "text" : comment.text,
                 "date" : comment.date.strftime('%Y-%m-%d'),
             }
@@ -366,6 +389,8 @@ def my_comment():
     results['data'] = data
 
     return json.dumps(results)
+
+
 
 
 
