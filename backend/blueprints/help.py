@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 
 help_bp = Blueprint('help',__name__)
 
-#@help_bp.before_request   #!@#!@#
+@help_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar']
     method = request.method
@@ -321,6 +321,19 @@ def cancel():
 
     return json.dumps(results)
 
+@help_bp.route('/pay',methods=['POST'])
+def pay():
+    results = {}
+    order_id = request.form.get('order_id')
+    order = Order.query.get(order_id)
+
+    order.is_pay = True
+    db.session.commit()
+    results['code'] = 0
+    results['msg'] = '付款成功'
+
+    return json.dumps(results)
+
 @help_bp.route('/remove',methods=['POST'])
 def remove():
     results={}
@@ -347,6 +360,8 @@ def comment():
     results = {}
 
     help_id = request.form.get('help_id')
+
+
     text = request.form.get('text')
 
     user_id = current_user.get_id()
@@ -379,6 +394,8 @@ def my_comment():
                 "help_id" : comment.help_id,
                 "text" : comment.text,
                 "date" : comment.date.strftime('%Y-%m-%d'),
+                "publisher_id" : comment.help.user.id,
+                "publisher_nickname" : comment.help.user.nickname,
             }
             data.append(d)
 

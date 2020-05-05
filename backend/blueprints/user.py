@@ -145,7 +145,8 @@ def set_avatar():
     user = User.query.get(id)
 
     filename = random_filename(f.filename)
-    f.save(os.path.join(current_app.config['AVATAR_PATH'], filename))
+
+    f.save(os.path.join(current_app.config['AVATAR_PATH'],filename))
 
     user.avatar = filename
 

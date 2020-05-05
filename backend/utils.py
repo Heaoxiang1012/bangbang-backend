@@ -10,6 +10,10 @@ from flask_mail import Message
 
 def random_filename(old_filename):
     ext = os.path.splitext(old_filename)[1]
+    bad = '"'
+    if ext[-1] == bad:
+        ext = ext.strip(bad)
+
     new_filename = uuid.uuid4().hex + ext
     return new_filename
 

@@ -13,9 +13,9 @@ class BaseConfig():
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-
     UPLOADED_PATH = os.path.join(basedir,'uploads')
     AVATAR_PATH = os.path.join(UPLOADED_PATH,'avatar')
+    FILE_PATH = os.path.join(UPLOADED_PATH,'files')
 
     ALLOW_FILE_EXT = ['jpg','png','jpeg','gif']
 
