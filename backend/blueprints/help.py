@@ -274,6 +274,7 @@ def record():
                 "help_id" : help.id,
                 "publisher_nickname" : help.user.nickname,
                 "publisher_id": help.user.id,
+                "order_id" : order.id,
                 "type" : type,
                 "name" : help.major,
                 "price" : help.price,
