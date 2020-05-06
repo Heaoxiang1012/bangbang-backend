@@ -203,7 +203,7 @@ def index():
     each_page = int(request.args.get('each_page'))
 
     length = Note.query.filter_by(tag=tag).count()
-    pagination = Note.query.order_by(Note.note_date.desc()).paginate(page,per_page=each_page)
+    pagination = Note.query.filter_by(tag=tag).order_by(Note.note_date.desc()).paginate(page,per_page=each_page)
     notes = pagination.items
 
     for note in notes :
