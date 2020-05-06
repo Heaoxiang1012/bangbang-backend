@@ -424,10 +424,10 @@ def index():
         d["publisher_nickname"] = help.user.nickname
         d["help_id"] = help.id
         d["name"] = help.major
-        d["release_date"] = help.release_date.strftime('%Y-%m-%d')
+        d["release_time"] = help.release_date.strftime('%Y-%m-%d')
         d["declaration"] = help.declaration
         if help.type == False:
-            d["grade"] = help.grade
+            d["course_score"] = help.grade
             d['type'] = 'course'
         else :
             d['type'] = 'skill'
