@@ -12,7 +12,7 @@ from ..utils import random_filename
 
 note_bp = Blueprint('note',__name__)
 
-#@note_bp.before_request   #!@#!@#
+@note_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar']
     method = request.method
@@ -80,6 +80,7 @@ def my_published():
     if user.notes != None :
         for item in user.notes:
             d = {
+                "note_id" : item.id,
                 "title" : item.title,
                 "tag" : item.tag,
                 "content" : item.content,
@@ -109,9 +110,11 @@ def search():
                         d = {
                             "publisher_id": note.user_id,
                             'publisher_nickname': note.user.nickname,
+                            'note_id' : note.id,
                             'title': note.title,
                             'tag': note.tag,
                             'content': note.content,
+                            "note_date": note.note_date.strftime('%Y-%m-%d'),
                         }
 
                         Data.append(note)
@@ -132,7 +135,8 @@ def note(id):
         "publisher_id" : note.user_id,
         "title" : note.title,
         "tag" : note.tag,
-        "content" : note.content
+        "content" : note.content,
+        "note_date" :note.note_date.strftime('%Y-%m-%d')
     }
 
     results['code'] = 0
