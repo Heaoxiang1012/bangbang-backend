@@ -178,10 +178,50 @@ def get_file(id):
 
     return send_from_directory(current_app.config['FILE_PATH'], filename)
 
+@note_bp.route('/categories',methods=['GET'])
+def categories():
+    results = {}
+    data = []
+    notes = Note.query.all()
+    for note in notes :
+        if note.tag not in data:
+            data.append(note.tag)
 
+    results['code'] = 0
+    results['msg'] = 'success'
+    results['data'] = data
 
+    return json.dumps(results)
 
+@note_bp.route('/index',methods=['GET'])
+def index():
+    results={}
+    data = []
 
+    tag = request.args.get('tag')
+    page = int(request.args.get('page'))
+    each_page = int(request.args.get('each_page'))
 
+    length = Note.query.filter_by(tag=tag).count()
+    pagination = Note.query.order_by(Note.note_date.desc()).paginate(page,per_page=each_page)
+    notes = pagination.items
 
+    for note in notes :
+        d = {}
+        d["publisher_id"] = note.user_id
+        d["publisher_nickname"]: note.user.nickname
+        d["note_id"] = note.id
+        d["title"] = note.title
+        d["content"] = note.content[0:32] +'...'
+        d["note_date"] = note.note_date.strftime('%Y-%m-%d')
+        d["compliments"] = note.compliments
+
+        data.append(d)
+
+    results['code'] = 0
+    results['msg'] = '返回成功'
+    results['data'] = data
+    results['length'] = length
+
+    return json.dumps(results)
 

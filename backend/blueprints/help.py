@@ -406,7 +406,40 @@ def my_comment():
 
     return json.dumps(results)
 
+@help_bp.route('/index',methods=['GET'])
+def index():
+    results = {}
+    data = []
 
+    page = int(request.args.get('page'))
+    each_page = int(request.args.get('each_page'))
+
+    length = Help.query.count()
+    pagination = Help.query.order_by(Help.release_date.desc()).paginate(page,per_page=each_page)
+    helps = pagination.items
+
+    for help in helps :
+        d = {}
+        d["publisher_id"] = help.user_id
+        d["publisher_nickname"] = help.user.nickname
+        d["help_id"] = help.id
+        d["name"] = help.major
+        d["release_date"] = help.release_date.strftime('%Y-%m-%d')
+        d["declaration"] = help.declaration
+        if help.type == False:
+            d["grade"] = help.grade
+            d['type'] = 'course'
+        else :
+            d['type'] = 'skill'
+
+        data.append(d)
+
+    results['code'] = 0
+    results['msg'] = '返回成功'
+    results['data'] = data
+    results['length'] = length
+
+    return json.dumps(results)
 
 
 
