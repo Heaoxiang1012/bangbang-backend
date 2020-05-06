@@ -209,7 +209,7 @@ def index():
     for note in notes :
         d = {}
         d["publisher_id"] = note.user_id
-        d["publisher_nickname"]: note.user.nickname
+        d["publisher_nickname"] = note.user.nickname
         d["note_id"] = note.id
         d["title"] = note.title
         d["content"] = note.content[0:32] +'...'
