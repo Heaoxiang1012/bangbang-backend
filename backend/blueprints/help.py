@@ -361,8 +361,6 @@ def comment():
     results = {}
 
     help_id = request.form.get('help_id')
-
-
     text = request.form.get('text')
 
     user_id = current_user.get_id()
@@ -433,6 +431,35 @@ def index():
             d['type'] = 'skill'
 
         data.append(d)
+
+    results['code'] = 0
+    results['msg'] = '返回成功'
+    results['data'] = data
+    results['length'] = length
+
+    return json.dumps(results)
+
+@help_bp.route('showcomments',methods=['GET'])
+def show_comments():
+    results = {}
+    data = []
+    help_id = request.args.get('help_id')
+    help = Help.query.get(help_id)
+    length = 0
+
+    if help.comments != None :
+        length = len(help.comments)
+        for comment  in help.comments :
+            user = User.query.get(comment.user_id)
+            d = {
+                "publisher_id" : comment.user_id,
+                "comment_id" : comment.id,
+                "date" : comment.date.strftime('%Y-%m-%d'),
+                "publisher_nickname" : user.nickname,
+                "text" : comment.text
+            }
+
+            data.append(d)
 
     results['code'] = 0
     results['msg'] = '返回成功'

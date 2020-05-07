@@ -225,3 +225,20 @@ def index():
 
     return json.dumps(results)
 
+@note_bp.route('/edit',methods=['POST'])
+def edit():
+    results = {}
+    id = request.form.get('note_id')
+    content = request.form.get('content')
+
+    note = Note.query.get(id)
+    note.content = content
+    note.note_date = datetime.today()
+
+    db.session.commit()
+
+    results['code'] = 0
+    results['msg'] = '修改成功'
+
+    return json.dumps(results)
+
