@@ -157,7 +157,19 @@ def set_avatar():
 
     return  json.dumps(results)
 
+@user_bp.route('/star/<int:uid>',methods=['GET'])
+def star(uid):
+    results = {}
+    user = User.query.get(uid)
 
+    results['code'] = 0
+    results['msg'] = "获取平均星级成功"
+    results['data'] = {
+        "uid" : uid,
+        "star" : user.star,
+    }
+
+    return json.dumps(results)
 
 
 

@@ -14,7 +14,7 @@ note_bp = Blueprint('note',__name__)
 
 @note_bp.before_request   #!@#!@#
 def login_project():
-    route = ['avatar']
+    route = ['avatar','file']
     method = request.method
     ext = request.path
     flag = False
@@ -98,11 +98,13 @@ def search():
     results = {}
     Data = []
     data = []
-    word = request.args.get('word')
+    word = str(request.args.get('word'))
+
     notes = Note.query.order_by(Note.note_date.desc()).all()
 
     if word != None:
-        for i in word:
+        words = word.split(' ')
+        for i in words:
             for note in notes:
                 if i in note.tag:
                     if note not in Data:

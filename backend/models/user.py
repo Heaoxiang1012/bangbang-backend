@@ -18,9 +18,13 @@ class User(db.Model,UserMixin):
     number = db.Column(db.String(8),unique=True)
     _password = db.Column(db.String(128))
 
+    star = db.Column(db.Float,default=0.0) #平均星级
+    count = db.Column(db.Integer,default=0) #被评价次数
+
     helps = db.relationship('Help',back_populates='user') #用户发布的辅导
     orders = db.relationship('Order',back_populates='be_user') #发起的预约
     notes = db.relationship('Note',back_populates='user')
+
 
     def set_password(self,password):
         self.password_hash=generate_password_hash(password)

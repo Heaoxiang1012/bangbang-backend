@@ -118,13 +118,14 @@ def search():
     results = {}
     Data = []
     data = []
-    word = request.args.get('word')
+    word = str(request.args.get('word'))
+
     helps = Help.query.order_by(Help.release_date.desc()).all()
 
 
     if word != None :
-
-        for i in word :
+        words = word.split(' ')
+        for i in words :
             for help in helps:
                 if i in help.major:
                     if help not in Data :
@@ -266,7 +267,7 @@ def record():
 
     for order in orders:
         help = order.help
-        if help!=None:
+        if help!=None and order.state == True:
             type = 'course'
             if type == True:
                 type = 'skill'
@@ -362,6 +363,7 @@ def comment():
 
     help_id = request.form.get('help_id')
     text = request.form.get('text')
+    star = float(request.form.get('star'))
 
     user_id = current_user.get_id()
 
@@ -369,8 +371,14 @@ def comment():
         help_id = help_id,
         user_id = user_id,
         text = text,
-        date = datetime.today()
+        date = datetime.today(),
+        star = star,
     )
+
+    help = Help.query.get(help_id)
+    total = help.user.star * help.user.count + star
+    help.user.count += 1
+    help.user.star = round(total/help.user.count,1)
 
     db.session.add(comment)
     db.session.commit()
@@ -379,6 +387,7 @@ def comment():
     results['msg'] = '评价成功'
 
     return json.dumps(results)
+
 
 @help_bp.route('/mycomment',methods=['GET'])
 def my_comment():
