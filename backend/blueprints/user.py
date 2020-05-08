@@ -47,7 +47,7 @@ def login_project():
 
 @user_bp.route('/grade',methods=['GET'])
 def grade():
-    id = current_user.get_id()
+    id = int(current_user.get_id())
     user = User.query.get(id)
 
     results = get_marks(id,user.number,user._password)
@@ -60,7 +60,7 @@ def change_password():
     old_password = request.form.get('old_password')
     new_password = request.form.get('new_password')
 
-    id = current_user.get_id()
+    id = int(current_user.get_id())
     user = User.query.get(id)
 
     if user.check_password(old_password) == False :
@@ -85,7 +85,7 @@ def profile(uid=-1):
     results = {}
 
     if uid == -1 :
-        uid = current_user.get_id()
+        uid = int(current_user.get_id())
 
     user = User.query.get(uid)
 
@@ -109,7 +109,7 @@ def set_profile():
     nickname = request.form.get('nickname')
     signature = request.form.get('signature')
 
-    id = current_user.get_id()
+    id = int(current_user.get_id())
     user = User.query.get(id)
 
     user.signature = signature
@@ -127,7 +127,7 @@ def set_profile():
 def get_avatar(uid):
 
     if uid == None :
-        uid = current_user.get_id()
+        uid = int(current_user.get_id())
 
     user = User.query.get(uid)
 
@@ -141,7 +141,7 @@ def set_avatar():
     results = {}
     f = request.files.get('avatar')
 
-    id = current_user.get_id()
+    id =  int(current_user.get_id())
     user = User.query.get(id)
 
     filename = random_filename(f.filename)

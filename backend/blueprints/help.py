@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 
 help_bp = Blueprint('help',__name__)
 
-@help_bp.before_request   #!@#!@#
+#@help_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar']
     method = request.method
@@ -59,7 +59,7 @@ def release():
         course_token = request.form.get('course_token')
         course = request.form.get('course')
         grade = request.form.get('grade')
-        uid = current_user.get_id()
+        uid = int(current_user.get_id())
         token = str(uid) + str(course) + str(grade)
 
         if check_password_hash(course_token,token) == False :
@@ -159,7 +159,7 @@ def search():
 def released():
     results = {}
     data = []
-    id = current_user.get_id()
+    id = int(current_user.get_id())
     user = User.query.get(id)
     helps = user.helps
 
@@ -189,7 +189,7 @@ def released():
 def book(id):
     results = {}
     help = Help.query.get(id)
-    uid = current_user.get_id()
+    uid = int(current_user.get_id())
     user = User.query.get(uid)
 
     #防止重复预约
@@ -230,7 +230,7 @@ def book(id):
 def booklist():
     results = {}
     data = []
-    id = current_user.get_id()
+    id = int(current_user.get_id())
     user = User.query.get(id)
     helps = user.helps
 
@@ -261,7 +261,7 @@ def record():
     results = {}
     data = []
 
-    id = current_user.get_id()
+    id = int(current_user.get_id())
     user = User.query.get(id)
     orders = user.orders
 
@@ -311,7 +311,7 @@ def agree():
 def cancel():
     results = {}
     help_id = request.form.get('help_id')
-    user_id = current_user.get_id()
+    user_id = int(current_user.get_id())
 
     order = Order.query.filter_by(help_id=help_id,be_user_id=user_id).order_by(Order.date.desc()).first()
 
@@ -343,7 +343,7 @@ def remove():
 
     help = Help.query.get(help_id)
 
-    uid = current_user.get_id()
+    uid = int(current_user.get_id())
 
     if help.user_id == uid:
         help.status = True
@@ -365,7 +365,7 @@ def comment():
     text = request.form.get('text')
     star = float(request.form.get('star'))
 
-    user_id = current_user.get_id()
+    user_id = int(current_user.get_id())
 
     comment = Comment(
         help_id = help_id,
@@ -393,7 +393,7 @@ def comment():
 def my_comment():
     results= {}
     data = []
-    uid = current_user.get_id()
+    uid = int(current_user.get_id())
     comments = Comment.query.filter_by(user_id=uid).order_by(Comment.date.desc()).all() #评价人是我的
 
     if comments != None :

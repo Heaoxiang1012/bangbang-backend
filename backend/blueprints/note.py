@@ -50,7 +50,7 @@ def release():
     tag = request.form.get('tag')
     content = request.form.get('content')
 
-    uid = current_user.get_id()
+    uid = int(current_user.get_id())
 
     note = Note(
         title = title,
@@ -74,7 +74,7 @@ def release():
 def my_published():
     results = {}
     data = []
-    id = current_user.get_id()
+    id = int(current_user.get_id())
     user  = User.query.get(id)
 
     if user.notes != None :
