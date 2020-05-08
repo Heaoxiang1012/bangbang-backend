@@ -164,19 +164,20 @@ def released():
     helps = user.helps
 
     for help in helps:
-        d = {}
-        d['help_id'] = int(help.id)
-        d['publisher_name'] = help.user.nickname
-        if help.type == True:
-            d['type'] = 'skill'
-        else :
-            d['type'] = 'course'
-            d['course_score'] = help.grade
+        if help.status == False :
+            d = {}
+            d['help_id'] = int(help.id)
+            d['publisher_name'] = help.user.nickname
+            if help.type == True:
+                d['type'] = 'skill'
+            else :
+                d['type'] = 'course'
+                d['course_score'] = help.grade
 
-        d['name'] = help.major
-        d['declaration'] = help.declaration
-        d['release_time'] =help.release_date.strftime('%Y-%m-%d')
-        data.append(d)
+            d['name'] = help.major
+            d['declaration'] = help.declaration
+            d['release_time'] =help.release_date.strftime('%Y-%m-%d')
+            data.append(d)
 
     results['code'] = 0
     results['msg'] = '查看成功'
@@ -426,20 +427,21 @@ def index():
     helps = pagination.items
 
     for help in helps :
-        d = {}
-        d["publisher_id"] = help.user_id
-        d["publisher_nickname"] = help.user.nickname
-        d["help_id"] = help.id
-        d["name"] = help.major
-        d["release_time"] = help.release_date.strftime('%Y-%m-%d')
-        d["declaration"] = help.declaration
-        if help.type == False:
-            d["course_score"] = help.grade
-            d['type'] = 'course'
-        else :
-            d['type'] = 'skill'
+        if help.status == False :
+            d = {}
+            d["publisher_id"] = help.user_id
+            d["publisher_nickname"] = help.user.nickname
+            d["help_id"] = help.id
+            d["name"] = help.major
+            d["release_time"] = help.release_date.strftime('%Y-%m-%d')
+            d["declaration"] = help.declaration
+            if help.type == False:
+                d["course_score"] = help.grade
+                d['type'] = 'course'
+            else :
+                d['type'] = 'skill'
 
-        data.append(d)
+            data.append(d)
 
     results['code'] = 0
     results['msg'] = '返回成功'
