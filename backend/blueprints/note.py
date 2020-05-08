@@ -4,7 +4,7 @@ from datetime import datetime
 
 from flask import Blueprint,request,current_app,send_from_directory
 from flask_login import current_user,login_user,logout_user
-from ..models.note import Note,File
+from ..models.note import Note,File,Compliments
 from ..extensions import db
 from ..models.user import User
 from ..utils import random_filename
@@ -12,7 +12,7 @@ from ..utils import random_filename
 
 note_bp = Blueprint('note',__name__)
 
-@note_bp.before_request   #!@#!@#
+#@note_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar','file']
     method = request.method
@@ -79,11 +79,18 @@ def my_published():
 
     if user.notes != None :
         for item in user.notes:
+            flag = True
+            cc = Compliments.query.filter_by(note_id=item.id, user_id=id).first()
+            if cc is None:
+                flag = False
+
             d = {
                 "note_id" : item.id,
                 "title" : item.title,
                 "tag" : item.tag,
                 "content" : item.content,
+                "compliments" : item.compliments,
+                "flag" : flag
             }
             data.append(d)
 
@@ -108,7 +115,10 @@ def search():
             for note in notes:
                 if i in note.tag:
                     if note not in Data:
-
+                        flag = True
+                        cc = Compliments.query.filter_by(note_id=note.id, user_id=current_user.id).first()
+                        if cc is None :
+                            flag = False
                         d = {
                             "publisher_id": note.user_id,
                             'publisher_nickname': note.user.nickname,
@@ -117,6 +127,8 @@ def search():
                             'tag': note.tag,
                             'content': note.content,
                             "note_date": note.note_date.strftime('%Y-%m-%d'),
+                            "compliments" : note.compliments,
+                            "flag" : flag
                         }
 
                         Data.append(note)
@@ -133,12 +145,19 @@ def note(id):
     results = {}
     note = Note.query.get(id)
 
+    flag = True#current_user.id
+    cc = Compliments.query.filter_by(note_id=id, user_id=current_user.id).first()
+    if cc is None:
+        flag = False
+
     data = {
         "publisher_id" : note.user_id,
         "title" : note.title,
         "tag" : note.tag,
         "content" : note.content,
-        "note_date" :note.note_date.strftime('%Y-%m-%d')
+        "note_date" : note.note_date.strftime('%Y-%m-%d'),
+        "compliments" : note.compliments,
+        "flag" : flag
     }
 
     results['code'] = 0
@@ -209,6 +228,11 @@ def index():
     notes = pagination.items
 
     for note in notes :
+        flag = True
+        cc = Compliments.query.filter_by(note_id=note.id, user_id=current_user.id).first()
+        if cc is None:
+            flag = False
+
         d = {}
         d["publisher_id"] = note.user_id
         d["publisher_nickname"] = note.user.nickname
@@ -217,6 +241,7 @@ def index():
         d["content"] = note.content[0:32] +'...'
         d["note_date"] = note.note_date.strftime('%Y-%m-%d')
         d["compliments"] = note.compliments
+        d['flag'] = flag
 
         data.append(d)
 
@@ -244,3 +269,52 @@ def edit():
 
     return json.dumps(results)
 
+@note_bp.route('/compliments',methods=['POST'])
+def compliments():
+    results = {}
+
+    id = request.form.get('note_id')
+    uid = current_user.id
+
+    cc = Compliments.query.filter_by(note_id=id, user_id=uid).first()
+    if cc != None :
+        results['code'] = 1
+        results['msg'] = '你已经点过赞了'
+
+        return json.dumps(results)
+
+    c = Compliments(
+        note_id = id,
+        user_id = uid
+    )
+
+    note = Note.query.get(id)
+    note.compliments += 1
+
+    db.session.add(c)
+    db.session.commit()
+
+    results['code'] = 0
+    results['msg'] = '点赞成功'
+
+    return json.dumps(results)
+
+@note_bp.route('/recomp',methods=['POST'])
+def recomp():
+    results = {}
+
+    id = request.form.get('note_id')
+    uid = current_user.id
+
+    c = Compliments.query.filter_by(note_id = id,user_id = uid).first()
+
+    note = Note.query.get(id)
+    note.compliments -= 1
+
+    db.session.delete(c)
+    db.session.commit()
+
+    results['code'] = 0
+    results['msg'] = '取消点赞成功'
+
+    return json.dumps(results)
