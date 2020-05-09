@@ -11,7 +11,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 
 help_bp = Blueprint('help',__name__)
 
-#@help_bp.before_request   #!@#!@#
+@help_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar']
     method = request.method
@@ -160,8 +160,8 @@ def released():
     results = {}
     data = []
     id = int(current_user.get_id())
-    user = User.query.get(id)
-    helps = user.helps
+    #user = User.query.get(id)
+    helps = Help.query.filter_by(user_id=id).order_by(Help.release_date.desc()).all()
 
     for help in helps:
         if help.status == False :
@@ -263,8 +263,8 @@ def record():
     data = []
 
     id = int(current_user.get_id())
-    user = User.query.get(id)
-    orders = user.orders
+    #user = User.query.get(id)
+    orders = Order.query.filter_by(be_user_id=id).order_by(Order.date.desc()).all()
 
     for order in orders:
         help = order.help
@@ -405,6 +405,7 @@ def my_comment():
                 "date" : comment.date.strftime('%Y-%m-%d'),
                 "publisher_id" : comment.help.user.id,
                 "publisher_nickname" : comment.help.user.nickname,
+                "name" : comment.help.major
             }
             data.append(d)
 
@@ -450,17 +451,18 @@ def index():
 
     return json.dumps(results)
 
-@help_bp.route('showcomments',methods=['GET'])
+@help_bp.route('/showcomments',methods=['GET'])
 def show_comments():
     results = {}
     data = []
     help_id = request.args.get('help_id')
-    help = Help.query.get(help_id)
+    #help = Help.query.get(help_id)
+    comments = Comment.query.filter_by(help_id=help_id).order_by(Comment.date.desc()).all()
     length = 0
 
-    if help.comments != None :
-        length = len(help.comments)
-        for comment  in help.comments :
+    if comments != None :
+        length = len(comments)
+        for comment  in comments :
             user = User.query.get(comment.user_id)
             d = {
                 "publisher_id" : comment.user_id,
@@ -476,6 +478,22 @@ def show_comments():
     results['msg'] = '返回成功'
     results['data'] = data
     results['length'] = length
+
+    return json.dumps(results)
+
+@help_bp.route('/edit',methods=['POST'])
+def edit():
+    results = {}
+    id = request.form.get('help_id')
+    declaration = request.form.get('declaration')
+
+    help = Help.query.get(id)
+
+    help.declaration = declaration
+
+    db.session.commit()
+    results['code'] = 0
+    results['msg'] = '编辑成功'
 
     return json.dumps(results)
 

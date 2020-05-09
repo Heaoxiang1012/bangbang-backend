@@ -75,10 +75,11 @@ def my_published():
     results = {}
     data = []
     id = int(current_user.get_id())
-    user  = User.query.get(id)
 
-    if user.notes != None :
-        for item in user.notes:
+    notes = Note.query.filter_by(user_id=id).order_by(Note.note_date.desc()).all()
+
+    if notes != None :
+        for item in notes:
             flag = True
             cc = Compliments.query.filter_by(note_id=item.id, user_id=id).first()
             if cc is None:
@@ -88,9 +89,10 @@ def my_published():
                 "note_id" : item.id,
                 "title" : item.title,
                 "tag" : item.tag,
-                "content" : item.content,
+                "content" : item.content[0:32] + '...' ,
                 "compliments" : item.compliments,
-                "flag" : flag
+                "flag" : flag,
+                "note_date" : item.note_date
             }
             data.append(d)
 
