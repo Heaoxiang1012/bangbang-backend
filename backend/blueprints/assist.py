@@ -1,12 +1,13 @@
 import json
 import random
 import os
+from datetime import datetime
 
-from flask import Blueprint,request
+from flask import Blueprint,request,current_app
 from flask_login import current_user,login_user,logout_user
 
 from ..models.user import User
-from ..models.assist import Assistant,Assisted,Couple
+from ..models.assist import Assistant,Assisted,Couple,Pickup
 
 from ..extensions import db
 from ..utils import check_register_form,send_mail,random_filename
@@ -14,7 +15,7 @@ from ..util_verify import get_name
 
 assist_bp = Blueprint('assist',__name__)
 
-#@assist_bp.before_request   #!@#!@#
+@assist_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar']
     method = request.method
@@ -71,7 +72,7 @@ def apply():
     results = {}
     user_id = int(request.form.get('user_id'))
 
-    id = 1#current_user.id
+    id = current_user.id
 
     if id == user_id :
         results['code'] = 1
@@ -91,5 +92,50 @@ def apply():
 
     return json.dumps(results)
 
+@assist_bp.route('/myassist',methods=['GET'])
+def myassist():
+    results = {}
+    data = []
+    couples = Couple.query.filter_by(user_id=current_user.id,status=1).all() #
 
+    if couples != None :
+        for couple in couples :
+            be_user = User.query.filter_by(id=couple.be_user_id).first()
+            assisted = Assisted.query.filter_by(user_id=couple.be_user_id).first()
+            d = {
+                'couple_id' : couple.id,
+                'assisted_nickname': be_user.nickname,
+                'assisted_id' : be_user.id,
+                'course' : assisted.course,
+            }
+            data.append(d)
+
+    results['code'] = 0
+    results['msg'] = '查看成功'
+    results['data'] = data
+
+    return  json.dumps(results)
+
+@assist_bp.route('/pickup',methods=['POST'])
+def pickup():
+    results = {}
+    couple_id = request.form.get('couple_id')
+    file = request.files.get('file')
+
+    filename = random_filename(file.filename)
+    file.save(os.path.join(current_app.config['PICK_UP_PATH'], filename))
+
+    pick_up = Pickup(
+        couple_id = couple_id,
+        date = datetime.today(),
+        filename = filename,
+    )
+
+    db.session.add(pick_up)
+    db.session.commit()
+
+    results['code'] = 0
+    results['msg'] = '打卡成功'
+
+    return json.dumps(results)
 
