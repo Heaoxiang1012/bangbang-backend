@@ -20,6 +20,7 @@ class User(db.Model,UserMixin):
 
     star = db.Column(db.Float,default=0.0) #平均星级
     count = db.Column(db.Integer,default=0) #被评价次数
+    is_admin = db.Column(db.Boolean,default=False) #是否是管理员
 
     helps = db.relationship('Help',back_populates='user') #用户发布的辅导
     orders = db.relationship('Order',back_populates='be_user') #发起的预约

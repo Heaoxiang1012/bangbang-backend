@@ -5,8 +5,11 @@ from .blueprints.auth import auth_bp
 from .blueprints.user import user_bp
 from .blueprints.help import help_bp
 from .blueprints.note import note_bp
+from .blueprints.msg import msg_bp
+from .blueprints.admin import admin_bp
+from .blueprints.assist import assist_bp
 
-from .extensions import db,login_manager,mail
+from .extensions import db,login_manager,mail,socketio,avatars
 from .models.help import Help,Order
 from .models.user import User
 from .models.note import File,Note
@@ -32,11 +35,16 @@ def register_blueprints(app):
     app.register_blueprint(user_bp, url_prefix='/user')
     app.register_blueprint(help_bp, url_prefix='/coach')
     app.register_blueprint(note_bp, url_prefix='/note')
+    app.register_blueprint(msg_bp,  url_prefix='/msg')
+    app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(assist_bp, url_prefix='/assist')
 
 def register_extensions(app):
     db.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
+    socketio.init_app(app)
+    avatars.init_app(app)
 
 def register_commands(app):
     @app.cli.command()

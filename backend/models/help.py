@@ -43,7 +43,6 @@ class Comment(db.Model):
     date = db.Column(db.TIMESTAMP, nullable=False)
     star = db.Column(db.Float,default=5)  # 评价星级
 
-
     help_id = db.Column(db.Integer,db.ForeignKey('help.id')) # 外键，关联辅导表
     user_id = db.Column(db.Integer,db.ForeignKey('user.id')) # 外键，评价人id
 

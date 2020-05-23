@@ -1,12 +1,14 @@
 import json
 import random
+import os
 
 from flask import Blueprint,request,current_app
 from flask_login import current_user,login_user,logout_user
+from flask_avatars import Identicon
 
 from ..models.user import User
-from ..extensions import db
-from ..utils import check_register_form,send_mail
+from ..extensions import db,avatars
+from ..utils import check_register_form,send_mail,random_filename
 from ..util_verify import get_name
 
 auth_bp = Blueprint('auth',__name__)
@@ -23,17 +25,22 @@ def register():
     email = request.form.get('email')
     code = check_register_form(username,password,nickname,email)
 
+    avatar =  Identicon()
+    filenames = avatar.generate(text=username)
+
     msg = Msg[code]
 
     if code == 0 :
         user = User(
             username=username,
             nickname=nickname,
-            email=email
+            email=email,
+            avatar=filenames[1],
         )
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
+
 
     results['code'] = code
     results['msg'] = msg

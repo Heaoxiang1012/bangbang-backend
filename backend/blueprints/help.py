@@ -464,15 +464,18 @@ def show_comments():
         length = len(comments)
         for comment  in comments :
             user = User.query.get(comment.user_id)
-            d = {
-                "publisher_id" : comment.user_id,
-                "comment_id" : comment.id,
-                "date" : comment.date.strftime('%Y-%m-%d'),
-                "publisher_nickname" : user.nickname,
-                "text" : comment.text
-            }
+            if user == None :
+                continue
+            else :
+                d = {
+                    "publisher_id" : comment.user_id,
+                    "comment_id" : comment.id,
+                    "date" : comment.date.strftime('%Y-%m-%d'),
+                    "publisher_nickname" : user.nickname,
+                    "text" : comment.text
+                }
 
-            data.append(d)
+                data.append(d)
 
     results['code'] = 0
     results['msg'] = '返回成功'

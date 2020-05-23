@@ -16,6 +16,7 @@ class BaseConfig():
     UPLOADED_PATH = os.path.join(basedir,'uploads')
     AVATAR_PATH = os.path.join(UPLOADED_PATH,'avatar')
     FILE_PATH = os.path.join(UPLOADED_PATH,'files')
+    AVATARS_SAVE_PATH = AVATAR_PATH
 
     ALLOW_FILE_EXT = ['jpg','png','jpeg','gif']
 

@@ -12,7 +12,7 @@ from ..utils import random_filename
 
 note_bp = Blueprint('note',__name__)
 
-#@note_bp.before_request   #!@#!@#
+@note_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar','file']
     method = request.method
