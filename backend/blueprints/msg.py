@@ -4,12 +4,37 @@ from datetime import datetime
 from flask import Blueprint,request,current_app,send_from_directory
 from flask_login import current_user,login_user,logout_user
 from ..models.msg import Message
-from ..extensions import db
+from ..extensions import db,socketio
 from ..models.user import User
-from werkzeug.security import generate_password_hash,check_password_hash
+from flask_socketio import emit
 
 
 msg_bp = Blueprint('msg',__name__)
+
+@socketio.on('getmsg',namespace='/chat')
+def get_msg(msg):
+    msg = json.loads(msg)
+    room = msg['room'] #user_id
+    text = msg['text']
+
+    user = User.query.get(room)
+
+    message = Message(
+        from_user_id = current_user.id,
+        to_user_id = room,
+        date = datetime.today(),
+        content = text,
+    )
+
+    db.session.add(message)
+    db.session.commit()
+
+    results = {
+        'room' : room,
+        'text' : text,
+        'user_nickname' : user.nickname
+    }
+    emit('sendmsg',json.dumps(results),room=room)
 
 
 @msg_bp.route('/msglist',methods=['GET'])
