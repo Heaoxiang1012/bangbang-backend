@@ -39,7 +39,7 @@ def login_project():
             id =current_user.get_id()
             user = User.query.get(id)
 
-            if user.is_verify == False:
+            if user.is_verify == False and user.is_admin == False:
                 result['code'] = -2
                 result['msg'] = '请先实名制认证！'
                 return json.dumps(result)

@@ -31,7 +31,7 @@ def login_project():
 
     else :
         result = {}
-        if current_user.is_authenticated == False:
+        if current_user.is_authenticated == False :
             result['code'] = -1
             result['msg'] = '您当前未登录！'
             return json.dumps(result)
@@ -40,7 +40,7 @@ def login_project():
             id =current_user.get_id()
             user = User.query.get(id)
 
-            if user.is_verify == False:
+            if user.is_verify == False and user.is_admin == False:
                 result['code'] = -2
                 result['msg'] = '请先实名制认证！'
                 return json.dumps(result)
