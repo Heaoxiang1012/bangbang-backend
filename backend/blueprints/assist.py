@@ -57,7 +57,7 @@ def index():
             d = {
                 'user_id' : assisted.user_id,
                 'user_nickname' : user.nickname,
-                'course' : assisted.course
+                'course' : assisted.course,
             }
             data.append(d)
 

@@ -68,9 +68,11 @@ def login():
         login_user(user)
         data['token'] = current_user.get_id()
         results['data'] = data
+        results['is_admin'] = user.is_admin
 
     results['code'] = code
     results['msg'] = msg
+
 
     return json.dumps(results)
 
