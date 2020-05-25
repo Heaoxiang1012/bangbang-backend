@@ -66,9 +66,9 @@ def login():
 
     else :
         login_user(user)
-        data['token'] = current_user.get_id()
+        data['is_admin'] = user.is_admin
         results['data'] = data
-        results['is_admin'] = user.is_admin
+
 
     results['code'] = code
     results['msg'] = msg
