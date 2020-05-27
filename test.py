@@ -18,7 +18,9 @@ get_mark_pattern = re.compile(
 
 def get_name(muser,passwd):
     data ={}
+    #用户名
     data['muser'] = muser
+    #用户密码
     data['passwd'] = passwd
     results = {}
     session = requests.session()
