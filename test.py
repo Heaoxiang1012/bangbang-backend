@@ -20,7 +20,7 @@ def get_name(muser,passwd):
     data ={}
     #用户名
     data['muser'] = muser
-    #用户密码
+    #用户密码part
     data['passwd'] = passwd
     results = {}
     session = requests.session()
