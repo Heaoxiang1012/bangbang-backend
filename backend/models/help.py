@@ -49,3 +49,4 @@ class Comment(db.Model):
     help = db.relationship('Help',back_populates='comments')  #预约的辅导
 
 
+#辅导模块的三个数据库表，用ORM实现帮扶表、预约表以及评价表
