@@ -50,7 +50,6 @@ def get_marks(uid,muser,passwd):
     data = {}
     data['muser'] = muser
     data['passwd'] = passwd
-
     results = {}
     session = requests.session()
     response = session.post(url=login_url, data=data, headers=headers)
