@@ -6,10 +6,16 @@ from flask_login import current_user,login_user,logout_user
 from ..models.msg import Message
 from ..extensions import db,socketio
 from ..models.user import User
-from flask_socketio import emit
+from flask_socketio import emit,join_room
 
 
 msg_bp = Blueprint('msg',__name__)
+
+@socketio.on('join',namespace='/chat')
+def join():
+    id = current_user.id
+    join_room(id)
+
 
 @socketio.on('getmsg',namespace='/chat')
 def get_msg(msg):
@@ -29,11 +35,20 @@ def get_msg(msg):
     db.session.add(message)
     db.session.commit()
 
-    results = {
-        'room' : room,
-        'text' : text,
-        'user_nickname' : user.nickname
+    user2 = User.query.get(current_user.id)
+
+    data = {
+        'room': current_user.id,
+        'content': text,
+        'user_nickname': user2.nickname
     }
+
+    results = {
+        'code' :0,
+        'msg' : '转发成功',
+        'data' : data,
+    }
+
     emit('sendmsg',json.dumps(results),room=room)
 
 
@@ -47,7 +62,7 @@ def get_msglist():
     uid = current_user.id
 
     from_messages = Message.query.filter_by(from_user_id=uid).order_by(Message.date.desc()).all() #发送方是登录用户
-    to_messages = Message.query.filter_by(to_messages=uid).order_by(Message.date.desc()).all()  #接收方是登录用户
+    to_messages = Message.query.filter_by(to_user_id=uid).order_by(Message.date.desc()).all()  #接收方是登录用户
 
     if from_messages is not None or to_messages is not None :
 
@@ -74,7 +89,7 @@ def get_msglist():
             d = {
                 'user_id' : id,
                 'last_message' : message.content,
-                'date' : message.date,
+                'date' : int(message.date.timestamp()),
                 'user.nickname' : user.nickname
             }
             data.append(d)
@@ -103,7 +118,7 @@ def history():
             'from_user_id' : message.from_user_id,
             'to_user_id' : message.to_user_id,
             'content' : message.content,
-            'date' : message.date,
+            'date' :int(message.date.timestamp())
         }
         data.append(d)
 
@@ -112,12 +127,11 @@ def history():
             'from_user_id' : message.from_user_id,
             'to_user_id' : message.to_user_id,
             'content' : message.content,
-            'date' : message.date,
+            'date' : int(message.date.timestamp())
         }
         data.append(d)
 
     for d in sorted(data,key= lambda s:s['date']):
-        d['date'] = d['date'].strftime( '%Y-%m-%d %H:%M:%S ' )
         Data.append(d)
 
     results['code'] = 0
