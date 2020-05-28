@@ -6,7 +6,7 @@ class Note(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(32), nullable=False)  # 标题
-    compliments = db.Column(db.Integer, default=0)  # 点赞数
+    compliments = db.Column(db.Integer, default=0)  # 点赞数目
     note_date = db.Column(db.TIMESTAMP, nullable=False)  # 笔记最近一次更新时间
     tag = db.Column(db.String(32),nullable=False)
     content = db.Column(db.Text)
