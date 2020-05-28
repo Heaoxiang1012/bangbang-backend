@@ -22,7 +22,7 @@ class Help(db.Model):
 
     comments = db.relationship('Comment',back_populates='help')  #预约的辅导
 
-# 预约信息表
+# 预约信息表part
 class Order(db.Model):
      id = db.Column(db.Integer,primary_key=True)
      date = db.Column(db.TIMESTAMP,nullable=False) # 预约发起时间
@@ -36,7 +36,7 @@ class Order(db.Model):
      be_user = db.relationship('User',back_populates='orders')  #预约的人
 
 
-# 评价表
+# 评价表part
 class Comment(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     text = db.Column(db.Text,nullable=False) # 评价内容
