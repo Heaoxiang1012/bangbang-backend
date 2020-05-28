@@ -29,3 +29,20 @@ class Compliments(db.Model):
 
     note = db.relationship('Note', back_populates='comps')  # 用户
     user = db.relationship('User', back_populates='comps')  # 用户
+
+
+    #class Note(db.Model):
+    #note_id = db.Column(db.Integer, Primary_key=True)
+
+    #u_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    #user = db.relationship('User', back_populates='notes')
+
+    #category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    #category = db.relationship('Category', back_populates='notes')
+
+    #title = db.Column(db.String(50), nullable=False)
+    #compliments = db.Column(db.Integer, default=0)
+    #note_date = db.Column(db.TIMESTAMP, nullable=False)
+    #content = db.Column(db.TEXT, nullable=False)
+    #image_name = db.Column(db.String(64), nullable=True)
+    #file_name = db.Column(db.String(64), nullable=True)
