@@ -5,7 +5,6 @@ class Assisted(db.Model):
     id = db.Column(db.Integer, primary_key=True) #帮扶对象
 
     course = db.Column(db.String(32)) #帮扶课程part
-
     user_id = db.Column(db.Integer,db.ForeignKey('user.id')) #user id
     status = db.Column(db.Integer,default=0) #0后台加入 1后台批准 2帮扶结束
 

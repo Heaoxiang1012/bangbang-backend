@@ -81,29 +81,38 @@ def add_user():
 def list():
     results = {}
     data = []
-    couples = Couple.query.filter_by(status=0).all()
 
-    if couples != None :
-        for couple in couples :
-            assistant_id = couple.user_id
-            assisted_id = couple.be_user_id
-            assistant = User.query.get(assistant_id)
-            assisted = User.query.get(assisted_id)
+    assists = Assisted.query.all()
 
+    for assist in assists :
+        be_user_id = assist.id
+        couples = Couple.query.filter_by(be_user_id=be_user_id,status=0).all()
+        if couples != None :
+            be_user = User.query.get(assist.user_id)
             d = {
-                'couple_id' : couple.id,
-                'assistant_id' : assistant_id ,#帮扶人id
-                'assistant_nickname' : assistant.nickname, #帮扶人昵称
-                'assisted_id' :   assisted_id ,#被帮扶人id
-                'assisted_nickname' :  assisted.nickname ,#被帮扶人昵称
-                'complement' : couple.complement,
-                'course' : couple.course,
-                'grade' : couple.grade,
+                'assisted_id' :   assist.id ,#被帮扶人id
+                'assisted_nickname' :  be_user.nickname ,#被帮扶人昵称
+                'assisted_course' : assist.course,
             }
+            dd = []
+            for couple in couples :
+                user_id = couple.user_id
+                user = User.query.get(user_id)
+                ddd = {
+                    'couple_id' : couple.id,
+                    'assistant_nickname' : user.nickname,
+                    'assistant_id' : couple.user_id,
+                    'complement' : couple.complement,
+                    'course' : couple.course,
+                    'grade' : couple.grade,
+                }
+                dd.append(ddd)
+            d['assistants'] = dd
             data.append(d)
-        results['code'] = 0
-        results['msg'] = '返回成功'
-        results['data'] = data
+
+    results['code'] = 0
+    results['msg'] = '返回成功'
+    results['data'] = data
 
     return json.dumps(results)
 
