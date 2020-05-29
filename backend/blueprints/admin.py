@@ -2,15 +2,18 @@ import json
 import random
 import os
 
-from flask import Blueprint,request
+from flask import Blueprint,request,send_from_directory,current_app
 from flask_login import current_user,login_user,logout_user
 
 from ..models.user import User
 from ..models.assist import Assistant,Assisted,Couple
+from ..models.note import File
 
 from ..extensions import db
 from ..utils import check_register_form,send_mail,random_filename
 from ..util_verify import get_name
+from werkzeug.security import generate_password_hash
+
 
 admin_bp = Blueprint('admin',__name__)
 
@@ -44,7 +47,7 @@ def login_project():
                 result['msg'] = '请先实名制认证！'
                 return json.dumps(result)
 
-            elif user.admin == False :
+            elif user.is_admin == False :
                 result['code'] = -3
                 result['msg'] = '权限不够！'
                 return json.dumps(result)
@@ -94,6 +97,8 @@ def list():
                 'assisted_id' :   assisted_id ,#被帮扶人id
                 'assisted_nickname' :  assisted.nickname ,#被帮扶人昵称
                 'complement' : couple.complement,
+                'course' : couple.course,
+                'grade' : couple.grade,
             }
             data.append(d)
         results['code'] = 0
@@ -117,3 +122,89 @@ def approve():
     results['msg'] = '批准成功'
 
     return json.dumps(results)
+
+
+@admin_bp.route('/pickup',methods=['POST'])
+def pickup():
+    couple_id = request.args.get('couple_id')
+    couple = Couple.query.get(couple_id)
+
+    results = {}
+    data = []
+
+    pickups = couple.pickups
+    if pickups != None :
+
+        for pickup in pickups :
+
+            d = {
+                'date' : pickup.date,
+                'file_id' : pickup.file_id,
+            }
+
+            data.append(d)
+
+    results['code'] = 0
+    results['msg'] = '添加成功'
+    results['data'] = data
+
+    return json.dumps(results)
+
+
+@admin_bp.route('/file/<int:id>',methods=['GET'])
+def get_file(id):
+    file = File.query.get(id)
+    filename = file.filename
+
+    return send_from_directory(current_app.config['FILE_PATH'], filename)
+
+@admin_bp.route('/rewardlist',methods=['GET'])
+def rewardlist():
+    results = {}
+    data = []
+    couples = Couple.query.filter_by(status=2).all()
+
+    if couples != None:
+        for couple in couples:
+            assistant_id = couple.user_id
+            assisted_id = couple.be_user_id
+            assistant = User.query.get(assistant_id)
+            assisted = User.query.get(assisted_id)
+
+            d = {
+                'couple_id': couple.id,
+                'assistant_id': assistant_id,  # 帮扶人id
+                'assistant_nickname': assistant.nickname,  # 帮扶人昵称
+                'assisted_id': assisted_id,  # 被帮扶人id
+                'assisted_nickname': assisted.nickname,  # 被帮扶人昵称
+                'complement': couple.complement,
+            }
+            data.append(d)
+        results['code'] = 0
+        results['msg'] = '返回成功'
+        results['data'] = data
+
+    return json.dumps(results)
+
+@admin_bp.route('/reward',methods=['POST'])
+def reward():
+    couple_id = request.form.get('couple_id')
+
+    couple = Couple.query.get(couple_id)
+    couple.status = 3
+    charter = generate_password_hash(couple_id)
+    couple.charter = charter
+
+    db.session.commit()
+
+    results = {}
+    data = {
+        'charter' : charter
+    }
+
+    results['code'] = 0
+    results['msg'] = '批准成功'
+    results['data']  = data
+
+    return json.dumps(results)
+

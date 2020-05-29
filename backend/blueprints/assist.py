@@ -8,6 +8,7 @@ from flask_login import current_user,login_user,logout_user
 
 from ..models.user import User
 from ..models.assist import Assistant,Assisted,Couple,Pickup
+from ..models.note import File
 
 from ..extensions import db
 from ..utils import check_register_form,send_mail,random_filename
@@ -96,6 +97,8 @@ def apply():
             user_id = id,
             be_user_id = user_id,
             complement = complement,
+            course = course,
+            grade = grade,
         )
 
         db.session.add(couple)
@@ -139,10 +142,16 @@ def pickup():
     filename = random_filename(file.filename)
     file.save(os.path.join(current_app.config['PICK_UP_PATH'], filename))
 
+    f = File(
+        filename = filename
+    )
+    db.session.add(f)
+    db.session.commit()
+
     pick_up = Pickup(
         couple_id = couple_id,
         date = datetime.today(),
-        filename = filename,
+        file_id = f.id,
     )
 
     db.session.add(pick_up)
@@ -153,3 +162,15 @@ def pickup():
 
     return json.dumps(results)
 
+@assist_bp.route('/reward',methods=['POST'])
+def reward():
+    results = {}
+    couple_id = request.form.get('couple_id')
+    couple = Couple.query.get(couple_id)
+
+    couple.status = 2
+    db.session.commit()
+
+    results['code'] = 0
+    results['msg'] = '申请成功'
+    return json.dumps(results)

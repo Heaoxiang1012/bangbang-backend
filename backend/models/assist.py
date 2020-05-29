@@ -20,27 +20,20 @@ class Couple(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('assistant.id')) #帮扶人
     be_user_id = db.Column(db.Integer, db.ForeignKey('assisted.id')) #帮扶对象
-    status = db.Column(db.Integer,default=0) #0未批准 1批准 2帮扶结束
+    status = db.Column(db.Integer,default=0) #0未批准 1批准 2申请综测中  3帮扶结束
     complement = db.Column(db.String(128))
 
-    pickups = db.relationship('Pickup', back_popsulates='couple')
+    course =  db.Column(db.String(32)) #帮扶课程
+    grade = db.Column(db.String(8) )  # 辅导者该课程绩点
+    charter = db.Column(db.String(128)) #唯一凭证
+
+    pickups = db.relationship('Pickup', back_populates='couple')
 
 class Pickup(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.TIMESTAMP, nullable=False)  # 打卡日期part
 
-    filename = db.Column(db.String(128),nullable=False,unique=True)
+    file_id = db.Column(db.Integer, db.ForeignKey('file.id'))
     couple_id = db.Column(db.Integer, db.ForeignKey('couple.id'))  #帮扶couple
 
     couple = db.relationship('Couple', back_populates='pickups')
-
-    #class Category(db.Model):
-    #category_id = db.Column(db.Integer, Primary_key=True)
-    #category_name = db.Column(db.String(50), unique=True)
-
-    #notes = db.relationship('Note', back_populates='category')  # 用户发布的笔记
-
-    #*********测试提交
-    #user_id = db.Column(db.Integer, db.ForeignKey('assistant.id')) #帮扶人
-    #be_user_id = db.Column(db.Integer, db.ForeignKey('assisted.id')) #帮扶对象
-    #status = db.Column(db.Integer,default=0) #0未批准 1批准 2帮扶结束

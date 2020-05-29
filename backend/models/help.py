@@ -6,19 +6,18 @@ class Help(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     declaration = db.Column(db.String(50), nullable=False) # 辅导者自我介绍
+
     type = db.Column(db.Boolean,default=False) #默认为course
     price = db.Column(db.Float, default=0.00)  # 价格，可为空
     status = db.Column(db.Boolean, default=False)  # 辅导状态 TRUE 下架状态
     release_date = db.Column(db.TIMESTAMP, nullable=False)  # 辅导信息发布日期
 
     major = db.Column(db.String(50))  # 辅导课程名
-    grade = db.Column(db.String(8), )  # 辅导者该课程绩点
+    grade = db.Column(db.String(8) )  # 辅导者该课程绩点
 
     skill_name =  db.Column(db.String(50)) #辅导状态 TRUE 下架状态
     skill_state = db.Column(db.Boolean,default=False) #辅导状态 需要批准
     file_id =  db.Column(db.Integer) #技能关联文件id
-
-
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id')) # 设置外键，关联用户表
     user = db.relationship('User',back_populates='helps') #用户发布的辅导

@@ -13,7 +13,7 @@ from ..utils import random_filename
 
 help_bp = Blueprint('help',__name__)
 
-@help_bp.before_request   #!@#!@#
+#@help_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar']
     method = request.method
