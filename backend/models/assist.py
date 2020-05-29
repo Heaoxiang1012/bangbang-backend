@@ -39,4 +39,7 @@ class Pickup(db.Model):
 
     #notes = db.relationship('Note', back_populates='category')  # 用户发布的笔记
 
-
+    #*********测试提交
+    #user_id = db.Column(db.Integer, db.ForeignKey('assistant.id')) #帮扶人
+    #be_user_id = db.Column(db.Integer, db.ForeignKey('assisted.id')) #帮扶对象
+    #status = db.Column(db.Integer,default=0) #0未批准 1批准 2帮扶结束
