@@ -33,4 +33,13 @@ class Pickup(db.Model):
 
     couple = db.relationship('Couple', back_populates='pickups')
 
+    #class Category(db.Model):
+    #category_id = db.Column(db.Integer, Primary_key=True)
+    #category_name = db.Column(db.String(50), unique=True)
 
+    #notes = db.relationship('Note', back_populates='category')  # 用户发布的笔记
+
+    #*********测试提交
+    #user_id = db.Column(db.Integer, db.ForeignKey('assistant.id')) #帮扶人
+    #be_user_id = db.Column(db.Integer, db.ForeignKey('assisted.id')) #帮扶对象
+    #status = db.Column(db.Integer,default=0) #0未批准 1批准 2帮扶结束

@@ -57,7 +57,9 @@ def grade():
 @user_bp.route('/change_password',methods=['POST'])
 def change_password():
     results = {}
+#修改密码时旧密码
     old_password = request.form.get('old_password')
+#修改密码时新密码
     new_password = request.form.get('new_password')
 
     id = int(current_user.get_id())
