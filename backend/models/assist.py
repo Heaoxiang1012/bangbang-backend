@@ -21,6 +21,7 @@ class Couple(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('assistant.id')) #帮扶人
     be_user_id = db.Column(db.Integer, db.ForeignKey('assisted.id')) #帮扶对象
     status = db.Column(db.Integer,default=0) #0未批准 1批准 2帮扶结束
+    complement = db.Column(db.String(128))
 
     pickups = db.relationship('Pickup', back_popsulates='couple')
 

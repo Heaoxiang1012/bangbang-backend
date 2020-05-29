@@ -52,10 +52,10 @@ def login_project():
 @admin_bp.route('/add',methods=['POST'])
 def add_user():
     results = {}
-    nickname = request.form.get('nickname')
+    id  = request.form.get('user_id')
     course = request.form.get('course')
 
-    user = User.query.filter_by(nickname=nickname).first()
+    user = User.query.get(id)
 
     if user != None :
         assist = Assisted(
@@ -93,6 +93,7 @@ def list():
                 'assistant_nickname' : assistant.nickname, #帮扶人昵称
                 'assisted_id' :   assisted_id ,#被帮扶人id
                 'assisted_nickname' :  assisted.nickname ,#被帮扶人昵称
+                'complement' : couple.complement,
             }
             data.append(d)
         results['code'] = 0

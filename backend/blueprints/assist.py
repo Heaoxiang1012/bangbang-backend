@@ -12,6 +12,8 @@ from ..models.assist import Assistant,Assisted,Couple,Pickup
 from ..extensions import db
 from ..utils import check_register_form,send_mail,random_filename
 from ..util_verify import get_name
+from werkzeug.security import check_password_hash
+
 
 assist_bp = Blueprint('assist',__name__)
 
@@ -78,10 +80,22 @@ def apply():
         results['code'] = 1
         results['msg'] = '请勿申请自己发起的帮扶'
 
+    course_token = request.form.get('course_token')
+    course = request.form.get('course')
+    grade = request.form.get('grade')
+    complement = request.form.get('complement')
+
+    token = str(id) + str(course) + str(grade)
+
+    if check_password_hash(course_token, token) == False:
+        results['code'] = -1
+        results['msg'] = "成绩有误！"
+
     else :
         couple = Couple(
             user_id = id,
             be_user_id = user_id,
+            complement = complement,
         )
 
         db.session.add(couple)

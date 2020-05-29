@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime
 
 from flask import Blueprint,request,current_app,send_from_directory
@@ -6,8 +7,9 @@ from flask_login import current_user,login_user,logout_user
 from ..models.help import Help,Order,Comment
 from ..extensions import db
 from ..models.user import User
+from ..models.note import File
 from werkzeug.security import generate_password_hash,check_password_hash
-
+from ..utils import random_filename
 
 help_bp = Blueprint('help',__name__)
 
@@ -54,6 +56,23 @@ def release():
         declaration = declaration,
         release_date = datetime.today(),
     )
+
+    if type == 'skill' :
+        file_id = request.form.get('file_id')
+        skill_name = request.form.get('skill_name')
+        help.file_id = file_id
+        help.skill_name = skill_name
+        db.session.add(help)
+        db.session.commit()
+
+        data = {
+            "id": int(help.id)
+        }
+
+        results['code'] = 0
+        results['msg'] = '发布成功'
+        results['data'] = data
+
 
     if type == 'course' :
         course_token = request.form.get('course_token')
@@ -503,7 +522,30 @@ def edit():
     return json.dumps(results)
 
 
+@help_bp.route('/upload', methods=['POST'])
+def upload():
+    results = {}
+    f = request.files.get('file')
 
+    filename = random_filename(f.filename)
 
+    f.save(os.path.join(current_app.config['SKILLS_PATH'], filename))
+
+    file = File(
+        filename=filename
+    )
+
+    db.session.add(file)
+    db.session.commit()
+
+    data = {
+        "file_id": file.id
+    }
+
+    results['code'] = 0
+    results['msg'] = '上传成功'
+    results['data'] = data
+
+    return json.dumps(results)
 
 

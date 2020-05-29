@@ -18,6 +18,7 @@ class BaseConfig():
     FILE_PATH = os.path.join(UPLOADED_PATH,'files')
     AVATARS_SAVE_PATH = AVATAR_PATH
     PICK_UP_PATH = os.path.join(UPLOADED_PATH,'pickups')
+    SKILLS_PATH = os.path.join(UPLOADED_PATH, 'skills')
 
     ALLOW_FILE_EXT = ['jpg','png','jpeg','gif']
 
