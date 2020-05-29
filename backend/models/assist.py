@@ -33,4 +33,10 @@ class Pickup(db.Model):
 
     couple = db.relationship('Couple', back_populates='pickups')
 
+    #class Category(db.Model):
+    #category_id = db.Column(db.Integer, Primary_key=True)
+    #category_name = db.Column(db.String(50), unique=True)
+
+    #notes = db.relationship('Note', back_populates='category')  # 用户发布的笔记
+
 
