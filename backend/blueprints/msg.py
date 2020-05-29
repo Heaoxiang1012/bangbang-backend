@@ -21,7 +21,7 @@ def join():
 def get_msg(msg):
     msg = json.loads(msg)
     room = msg['room'] #user_id
-    text = msg['text']
+    text = msg['text']#消息内容
 
     user = User.query.get(room)
 
