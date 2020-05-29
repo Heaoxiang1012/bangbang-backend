@@ -80,34 +80,41 @@ def apply():
     if id == user_id :
         results['code'] = 1
         results['msg'] = '请勿申请自己发起的帮扶'
-
-    course_token = request.form.get('course_token')
-    course = request.form.get('course')
-    grade = request.form.get('grade')
-    complement = request.form.get('complement')
-
-    token = str(id) + str(course) + str(grade)
-
-    if check_password_hash(course_token, token) == False:
-        results['code'] = -1
-        results['msg'] = "成绩有误！"
-
     else :
-        couple = Couple(
-            user_id = id,
-            be_user_id = user_id,
-            complement = complement,
-            course = course,
-            grade = grade,
-        )
+        course_token = request.form.get('course_token')
+        course = request.form.get('course')
+        grade = request.form.get('grade')
+        complement = request.form.get('complement')
 
-        db.session.add(couple)
-        db.session.commit()
+        token = str(id) + str(course) + str(grade)
 
-        results['code'] = 0
-        results['msg'] = '申请成功'
+        if check_password_hash(course_token, token) == False:
+            results['code'] = -1
+            results['msg'] = "成绩有误！"
 
-    return json.dumps(results)
+        else :
+            cc = Couple.query.filter_by(user_id=id,be_user_id=user_id).first()
+
+            if cc == None:
+                couple = Couple(
+                    user_id = id,
+                    be_user_id = user_id,
+                    complement = complement,
+                    course = course,
+                    grade = grade,
+                )
+
+                db.session.add(couple)
+                db.session.commit()
+
+                results['code'] = 0
+                results['msg'] = '申请成功'
+
+            else :
+                results['code'] = 1
+                results['msg'] = '请勿重复申请'
+
+        return json.dumps(results)
 
 @assist_bp.route('/myassist',methods=['GET'])
 def myassist():
