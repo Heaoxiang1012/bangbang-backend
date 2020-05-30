@@ -142,3 +142,40 @@ def history():
     return json.dumps(results)
 
 #tetpy
+
+#@note_bp.route('/release', methods=['POST'])  #
+#def release():
+    #results = {}
+
+    #code = 0
+    #msg = '发布成功'
+    #data = {}
+
+    #title = request.form.get('title')
+    #tag = request.form.get('tag')
+    #content = request.form.get('content')
+
+    #note = Note(
+        #title=title,
+        #tag=tag,
+        #content=content,
+        #note_date=datetime.today(),
+    #)
+
+    #uid = current_user.get_id()
+    #category_id = Category(name='tag')
+
+    #note.category_id = category_id
+    #note.u_id = uid
+    #db.session.add(note)
+    #db.session.commit()
+
+    #data = {
+        #"id": int(note.id)
+    #}
+
+    #results['code'] = 0
+    #results['msg'] = '发布成功'
+    #results['data'] = data
+
+    #return json.dumps(results)
