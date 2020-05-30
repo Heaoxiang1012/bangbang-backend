@@ -142,3 +142,21 @@ def history():
     return json.dumps(results)
 
 #tetpy
+
+    #@note_bp.route('/<int:id>', methods=['GET']) #
+    #def view(id):
+    #results = {}
+    #note = Note.query.get(id)
+
+    #data = {
+        #"publisher_id": note.u_id,
+        #"title": note.title,
+        #"tag": note.category.category_name,
+        #"content": note.content
+    #}
+
+    #results['code'] = 0
+    #results['msg'] = '查看成功'
+    #results['data'] = data
+
+    #return json.dumps(results)
