@@ -10,6 +10,8 @@ from ..models.user import User
 from ..models.note import File
 from werkzeug.security import generate_password_hash,check_password_hash
 from ..utils import random_filename
+from flask_socketio import emit
+
 
 help_bp = Blueprint('help',__name__)
 
@@ -37,7 +39,7 @@ def login_project():
         else :
             id =current_user.get_id()
             user = User.query.get(id)
-	#若该用户没有实名认证
+
             if user.is_verify == False and user.is_admin == False:
                 result['code'] = -2
                 result['msg'] = '请先实名制认证！'
@@ -242,6 +244,21 @@ def book(id):
 
     results['code'] = 0
     results['msg'] = '预约成功'
+
+
+    data = {
+        'room': 'server',
+        'content': '您有新的预约,请尽快处理!',
+        'user_nickname': 'server'
+    }
+
+    server_results = {
+        'code' :0,
+        'msg' : '发送成功',
+        'data' : data,
+    }
+
+    emit('inform',json.dumps(server_results),room=current_user.id)
 
     return json.dumps(results)
 

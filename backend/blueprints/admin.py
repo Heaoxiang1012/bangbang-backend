@@ -186,6 +186,8 @@ def rewardlist():
                 'assisted_id': assisted_id,  # 被帮扶人id
                 'assisted_nickname': assisted.nickname,  # 被帮扶人昵称
                 'complement': couple.complement,
+                'days': len(couple.pickups),
+                'course' : couple.course,
             }
             data.append(d)
         results['code'] = 0
