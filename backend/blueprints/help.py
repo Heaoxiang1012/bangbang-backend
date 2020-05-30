@@ -37,7 +37,7 @@ def login_project():
         else :
             id =current_user.get_id()
             user = User.query.get(id)
-
+	#若该用户没有实名认证
             if user.is_verify == False and user.is_admin == False:
                 result['code'] = -2
                 result['msg'] = '请先实名制认证！'
