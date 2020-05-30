@@ -137,7 +137,6 @@ def approve():
 def pickup():
     couple_id = request.args.get('couple_id')
     couple = Couple.query.get(couple_id)
-
     results = {}
     data = []
 
