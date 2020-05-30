@@ -13,7 +13,7 @@ class Note(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))  #谁发布的
 
-    user = db.relationship('User', back_populates='notes')  # 用户
+    user = db.relationship('User', back_populates='notes')  # 用户User
     comps = db.relationship('Compliments', back_populates='note')
 
 
