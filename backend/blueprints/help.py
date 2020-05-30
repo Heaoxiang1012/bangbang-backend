@@ -247,7 +247,7 @@ def book(id):
 
 
     data = {
-        'room': 'server',
+        'room': 0,
         'content': '您有新的预约,请尽快处理!',
         'user_nickname': 'server'
     }
@@ -258,7 +258,7 @@ def book(id):
         'data' : data,
     }
 
-    emit('inform',json.dumps(server_results),room=current_user.id)
+    emit('inform',json.dumps(server_results),room=help.user_id,namespace='/chat')
 
     return json.dumps(results)
 
