@@ -181,3 +181,38 @@ def reward():
     results['code'] = 0
     results['msg'] = '申请成功'
     return json.dumps(results)
+
+@admin_bp.before_request
+def login_project():
+    route = ['avatar','file']
+    method = request.method
+    ext = request.path
+    flag = False
+
+    for i in route :
+        if i in ext :
+            flag = True
+
+    if method == 'GET' and flag :
+        pass
+
+    else :
+        result = {}
+        if current_user.is_authenticated == False:
+            result['code'] = -1
+            result['msg'] = '您当前未登录！'
+            return json.dumps(result)
+
+        else :
+            id =current_user.get_id()
+            user = User.query.get(id)
+
+            if user.is_verify == False and user.is_admin == False:
+                result['code'] = -2
+                result['msg'] = '请先实名制认证！'
+                return json.dumps(result)
+
+            elif user.is_admin == False :
+                result['code'] = -3
+                result['msg'] = '权限不够！'
+                return json.dumps(result)
