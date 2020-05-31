@@ -85,7 +85,7 @@ def list():
     assists = Assisted.query.all()
 
     for assist in assists :
-        be_user_id = assist.id
+        be_user_id = assist.user_id
         couples = Couple.query.filter_by(be_user_id=be_user_id,status=0).all()
         if couples != None :
             be_user = User.query.get(assist.user_id)
@@ -133,7 +133,7 @@ def approve():
     return json.dumps(results)
 
 
-@admin_bp.route('/pickup',methods=['POST'])
+@admin_bp.route('/pickup',methods=['GET'])
 def pickup():
     couple_id = request.args.get('couple_id')
     couple = Couple.query.get(couple_id)
@@ -146,7 +146,7 @@ def pickup():
         for pickup in pickups :
 
             d = {
-                'date' : pickup.date,
+                'date' : pickup.date.strftime('%Y-%m-%d'),
                 'file_id' : pickup.file_id,
             }
 
@@ -164,7 +164,7 @@ def get_file(id):
     file = File.query.get(id)
     filename = file.filename
 
-    return send_from_directory(current_app.config['FILE_PATH'], filename)
+    return send_from_directory(current_app.config['PICK_UP_PATH'], filename)
 
 @admin_bp.route('/rewardlist',methods=['GET'])
 def rewardlist():
@@ -208,13 +208,50 @@ def reward():
     db.session.commit()
 
     results = {}
-    data = {
-        'charter' : charter
-    }
 
     results['code'] = 0
     results['msg'] = '批准成功'
-    results['data']  = data
 
     return json.dumps(results)
+
+@admin_bp.route('/reject',methods=['POST'])
+def reject():
+    couple_id = request.form.get('couple_id')
+
+    couple = Couple.query.get(couple_id)
+    couple.status = -1
+
+    db.session.commit()
+
+    results = {}
+
+    results['code'] = 0
+    results['msg'] = '操作成功'
+
+    return json.dumps(results)
+
+@admin_bp.route('/access',methods=['GET'])
+def access():
+    couples = Couple.query.filter_by(status=3).all()
+
+    results = {}
+    data = []
+
+    for couple in couples :
+        d = {}
+        uid = couple.user_id
+        user = User.query.get(uid)
+
+        d['name'] = user.real_name
+        d['sno']  = user.number
+
+        data.append(d)
+
+    results['code'] = 0
+    results['msg'] = '返回成功'
+    results['data'] = data
+
+    return json.dumps(results)
+
+
 

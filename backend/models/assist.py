@@ -19,7 +19,7 @@ class Couple(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('assistant.id')) #帮扶人
     be_user_id = db.Column(db.Integer, db.ForeignKey('assisted.id')) #帮扶对象
-    status = db.Column(db.Integer,default=0) #0未批准 1批准 2申请综测中  3帮扶结束
+    status = db.Column(db.Integer,default=0) #0未批准 1批准 2申请综测中 3综测申请成功 4帮扶结束 -1 综测被拒
     complement = db.Column(db.String(128))
 
     course =  db.Column(db.String(32)) #帮扶课程

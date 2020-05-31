@@ -140,12 +140,17 @@ def verify():
 
     id = current_user.get_id()
     user = User.query.get(id)
-
-    user._password = _password
-    user.number = number
-    user.is_verify = True
-    db.session.commit()
     results = get_name(number, _password)
+
+    if results['code'] == 0 :
+
+        user._password = _password
+        user.number = number
+        user.is_verify = True
+        user.real_name = results['msg'].split('，')[0]
+
+        db.session.commit()
+
 
     return json.dumps(results)
 
