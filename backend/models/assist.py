@@ -17,7 +17,7 @@ class Assistant(db.Model):
 class Couple(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('assistant.id')) #帮扶人
+    user_id = db.Column(db.Integer, db.ForeignKey('assistant.id')) #帮扶者
     be_user_id = db.Column(db.Integer, db.ForeignKey('assisted.id')) #帮扶对象
     status = db.Column(db.Integer,default=0) #0未批准 1批准 2申请综测中  3帮扶结束
     complement = db.Column(db.String(128))
