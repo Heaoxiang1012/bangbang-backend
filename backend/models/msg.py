@@ -12,4 +12,11 @@ class Message(db.Model):
     from_user_id = db.Column(db.Integer, db.ForeignKey('help.id'))  # 发送消息人id
     to_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # 外键,接收消息人id
 
+#test
+#msg_bp = Blueprint('msg',__name__)
+
+#@socketio.on('join',namespace='/chat')
+#def join():
+    #id = current_user.id
+    #join_room(id)
 
