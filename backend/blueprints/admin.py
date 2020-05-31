@@ -125,7 +125,7 @@ def approve():
     couple.status = 1
 
     be_user_id = couple.be_user_id
-    assisted = Assisted.query.filter_by(be_user_id).first()
+    assisted = Assisted.query.get(be_user_id)
     assisted.status = 1
 
     db.session.commit()
