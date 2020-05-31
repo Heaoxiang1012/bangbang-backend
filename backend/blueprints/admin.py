@@ -76,7 +76,6 @@ def add_user():
 
     return json.dumps(results)
 
-
 @admin_bp.route('/list',methods=['GET'])
 def list():
     results = {}
