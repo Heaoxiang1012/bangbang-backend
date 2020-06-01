@@ -18,7 +18,7 @@ from werkzeug.security import check_password_hash
 
 assist_bp = Blueprint('assist',__name__)
 
-@assist_bp.before_request   #!@#!@#
+#@assist_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar']
     method = request.method
@@ -145,6 +145,16 @@ def pickup():
     results = {}
     couple_id = request.form.get('couple_id')
     file = request.files.get('file')
+
+    day = datetime.today().day
+    couple = Couple.query.get(couple_id)
+
+    if couple.pickups != None :
+        for pickup in couple.pickups:
+            if pickup.date.day == day :
+                results['code'] = 1
+                results['msg'] = '当天已打卡！请勿重复打卡！'
+                return json.dumps(results)
 
     filename = random_filename(file.filename)
     file.save(os.path.join(current_app.config['PICK_UP_PATH'], filename))

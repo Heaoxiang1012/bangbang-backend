@@ -13,6 +13,7 @@ from .extensions import db,login_manager,mail,socketio,avatars
 from .models.help import Help,Order
 from .models.user import User
 from .models.note import File,Note
+from .models.assist import Couple
 
 import os
 
