@@ -12,7 +12,6 @@ from ..utils import random_filename
 
 user_bp = Blueprint('user',__name__)
 
-
 @user_bp.before_request
 def login_project():
     route = ['avatar']

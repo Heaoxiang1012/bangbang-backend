@@ -17,6 +17,7 @@ class User(db.Model,UserMixin):
 
     number = db.Column(db.String(8),unique=True)
     _password = db.Column(db.String(128))
+    real_name = db.Column(db.String(16))
 
     star = db.Column(db.Float,default=0.0) #平均星级
     count = db.Column(db.Integer,default=0) #被评价次数

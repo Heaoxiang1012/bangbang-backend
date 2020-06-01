@@ -90,7 +90,7 @@ def get_msglist():
                 'user_id' : id,
                 'last_message' : message.content,
                 'date' : int(message.date.timestamp()),
-                'user.nickname' : user.nickname
+                'user_nickname' : user.nickname
             }
             data.append(d)
 
