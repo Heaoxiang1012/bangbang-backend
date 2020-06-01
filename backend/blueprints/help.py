@@ -565,4 +565,15 @@ def upload():
 
     return json.dumps(results)
 
+#@help_bp.route('/remove',methods=['POST'])
+#def remove():
+    #results={}
+    #help_id = request.form.get('help_id')
 
+    #help = Help.query.get(help_id)
+
+    #uid = int(current_user.get_id())
+
+ 
+
+   # return json.dumps(results)
