@@ -14,7 +14,6 @@ from ..utils import check_register_form,send_mail,random_filename
 from ..util_verify import get_name
 from werkzeug.security import generate_password_hash
 
-
 admin_bp = Blueprint('admin',__name__)
 
 @admin_bp.before_request
