@@ -135,6 +135,9 @@ def approve():
 
     be_user_id = couple.be_user_id
     assisted = Assisted.query.get(be_user_id)
+
+    be_user = User.query.get(assisted.user_id)
+
     assisted.status = 1
 
     assistant = Assistant.query.get(couple.user_id)
@@ -144,9 +147,11 @@ def approve():
     results['code'] = 0
     results['msg'] = '批准成功'
 
+    content = '您对%s的%s科目帮扶申请已被管理员审批!' %(be_user.nickname,assisted.course)
+
     data = {
         'room': 0,
-        'content': '您的帮扶申请已被批准！',
+        'content': content,
         'user_nickname': '系统消息'
     }
 
@@ -247,6 +252,8 @@ def reward():
 
     be_user_id = couple.be_user_id
     assisted = Assisted.query.get(be_user_id)
+    be_user = User.query.get(assisted.user_id)
+
     assisted.status = 2 #本次帮扶已结束
 
     assistant = Assistant.query.get(couple.user_id)
@@ -261,9 +268,11 @@ def reward():
     results['code'] = 0
     results['msg'] = '批准成功'
 
+    content = '您对%s的%s的科目帮扶综测申请已被管理员审批!' % (be_user.nickname, assisted.course)
+
     data = {
         'room': 0,
-        'content': '您的综测申请已被批准！',
+        'content': content,
         'user_nickname': '系统消息'
     }
 
