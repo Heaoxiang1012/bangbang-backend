@@ -57,7 +57,7 @@ def register_commands(app):
 def register_shell_context(app):
     @app.shell_context_processor
     def make_shell_context():
-        return dict(db=db,User=User,Help=Help,Order=Order,Note=Note,File=File,Assisted=Assisted,Assistant=Assistant,datetime=datetime)
+        return dict(db=db,User=User,Help=Help,Order=Order,Note=Note,File=File,Assisted=Assisted,Assistant=Assistant,datetime=datetime,Couple=Couple)
 
 
 

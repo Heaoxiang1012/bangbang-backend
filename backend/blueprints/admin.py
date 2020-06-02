@@ -92,23 +92,24 @@ def list():
     assists = Assisted.query.filter_by(status=0).all()
 
     for assist in assists :
-        be_user_id = assist.user_id
+        be_user_id = assist.id
         couples = Couple.query.filter_by(be_user_id=be_user_id,status=0).all()
         if couples != None :
             be_user = User.query.get(assist.user_id)
             d = {
-                'assisted_id' :   assist.id ,#被帮扶人id
+                'assisted_user_id' :   assist.user_id ,#被帮扶人id
                 'assisted_nickname' :  be_user.nickname ,#被帮扶人昵称
                 'assisted_course' : assist.course,
             }
             dd = []
             for couple in couples :
-                user_id = couple.user_id
-                user = User.query.get(user_id)
+                _assistant = Assistant.query.get(couple.user_id)
+
+                user = User.query.get(_assistant.user_id)
                 ddd = {
                     'couple_id' : couple.id,
                     'assistant_nickname' : user.nickname,
-                    'assistant_id' : couple.user_id,
+                    'assistant_user_id' : user.id,
                     'complement' : couple.complement,
                     'course' : couple.course,
                     'grade' : couple.grade,
@@ -159,7 +160,7 @@ def approve():
         from_user_id= 0,
         to_user_id=assistant.user_id,
         date=datetime.today(),
-        content=server_results['content'],
+        content=data['content'],
     )
 
     db.session.add(msg)
@@ -213,15 +214,19 @@ def rewardlist():
         for couple in couples:
             assistant_id = couple.user_id
             assisted_id = couple.be_user_id
-            assistant = User.query.get(assistant_id)
-            assisted = User.query.get(assisted_id)
+
+            assistant = Assistant.query.get(assistant_id)
+            assisted = Assisted.query.get(assisted_id)
+
+            user = User.query.get(assistant.user_id)
+            be_user = User.query.get(assisted.user_id)
 
             d = {
                 'couple_id': couple.id,
-                'assistant_id': assistant_id,  # 帮扶人id
-                'assistant_nickname': assistant.nickname,  # 帮扶人昵称
-                'assisted_id': assisted_id,  # 被帮扶人id
-                'assisted_nickname': assisted.nickname,  # 被帮扶人昵称
+                'assistant_user_id': user.id,  # 帮扶人id
+                'assistant_nickname': user.nickname,  # 帮扶人昵称
+                'assisted_user_id': be_user.id,  # 被帮扶人id
+                'assisted_nickname': be_user.nickname,  # 被帮扶人昵称
                 'complement': couple.complement,
                 'days': len(couple.pickups),
                 'course' : couple.course,
@@ -272,7 +277,7 @@ def reward():
         from_user_id= 0,
         to_user_id=assistant.user_id,
         date=datetime.today(),
-        content=server_results['content'],
+        content=data['content'],
     )
 
     db.session.add(msg)
@@ -307,7 +312,9 @@ def access():
 
     for couple in couples :
         d = {}
-        uid = couple.user_id
+        assistant = Assistant.query.get(couple.user_id)
+        uid = assistant.user_id
+
         user = User.query.get(uid)
 
         d['name'] = user.real_name

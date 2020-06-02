@@ -74,32 +74,43 @@ def index():
 def apply():
     results = {}
     user_id = int(request.form.get('user_id'))
+    course = request.form.get('course')
+    grade = request.form.get('grade')
+    complement = request.form.get('complement')
+
+    assist = Assisted.query.filter_by(user_id=user_id).first()
 
     id = current_user.id
 
     if id == user_id :
         results['code'] = 1
         results['msg'] = '请勿申请自己发起的帮扶'
+
     else :
         course_token = request.form.get('course_token')
-        course = request.form.get('course')
-        grade = request.form.get('grade')
-
-
         token = str(id) + str(course) + str(grade)
-
         if check_password_hash(course_token, token) == False:
             results['code'] = -1
             results['msg'] = "成绩有误！"
 
-        else :
-            complement = request.form.get('complement')
-            cc = Couple.query.filter_by(user_id=id,be_user_id=user_id).first()
+        else:
+            _assistant = Assistant.query.filter_by(user_id=id).first()
+            cc = None
+
+            if _assistant is not None :
+                cc = Couple.query.filter_by(user_id=_assistant.id,be_user_id=assist.id).first()
 
             if cc == None:
-                couple = Couple(
+
+                assistant = Assistant(
                     user_id = id,
-                    be_user_id = user_id,
+                )
+                db.session.add(assistant)
+                db.session.commit()
+
+                couple = Couple(
+                    user_id = assistant.id,
+                    be_user_id = assist.id,
                     complement = complement,
                     course = course,
                     grade = grade,
@@ -121,19 +132,25 @@ def apply():
 def myassist():
     results = {}
     data = []
-    couples = Couple.query.filter_by(user_id=current_user.id,status=1).all() #
 
-    if couples != None :
-        for couple in couples :
-            be_user = User.query.filter_by(id=couple.be_user_id).first()
-            assisted = Assisted.query.filter_by(user_id=couple.be_user_id).first()
-            d = {
-                'couple_id' : couple.id,
-                'assisted_nickname': be_user.nickname,
-                'assisted_id' : be_user.id,
-                'course' : assisted.course,
-            }
-            data.append(d)
+    assistant = Assistant.query.filter_by(user_id=current_user.id).first()
+
+    if assistant != None:
+        couples = Couple.query.filter_by(user_id=assistant.id,status=1).all()
+
+        if couples != None :
+            for couple in couples :
+                assisted = Assisted.query.get(couple.be_user_id)
+
+                be_user = User.query.get(assisted.user_id)
+
+                d = {
+                    'couple_id' : couple.id,
+                    'assisted_nickname': be_user.nickname,
+                    'assisted_user_id' : be_user.id,
+                    'course' : assisted.course,
+                }
+                data.append(d)
 
     results['code'] = 0
     results['msg'] = '查看成功'
@@ -192,31 +209,3 @@ def reward():
     results['code'] = 0
     results['msg'] = '申请成功'
     return json.dumps(results)
-
-#@admin_bp.before_request
-#def login_project():
-    #route = ['avatar','file']
-    #method = request.method
-    #ext = request.path
-    #flag = False
-
-    #for i in route :
-        #if i in ext :
-            #flag = True
-
-    #if method == 'GET' and flag :
-        #pass
-
-    #else :
-        #result = {}
-        #if current_user.is_authenticated == False:
-            #result['code'] = -1
-            #result['msg'] = '您当前未登录！'
-            #return json.dumps(result)
-
-        #else :
-            #id =current_user.get_id()
-            #user = User.query.get(id)
-      
-
-        #return json.dumps(result)
