@@ -164,7 +164,7 @@ def history():
 
         results['code'] = 0
         results['msg'] = '查看成功'
-        results['data'] = Data
+        results['data'] = data
         results['user_nickname'] = '系统消息'
 
     return json.dumps(results)
