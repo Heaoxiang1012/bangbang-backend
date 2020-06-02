@@ -13,9 +13,10 @@ from .extensions import db,login_manager,mail,socketio,avatars
 from .models.help import Help,Order
 from .models.user import User
 from .models.note import File,Note
-from .models.assist import Couple
+from .models.assist import Couple,Assisted,Assistant
 
 import os
+from datetime import  datetime
 
 def create_app(config_name=None):
     if config_name==None:
@@ -56,7 +57,7 @@ def register_commands(app):
 def register_shell_context(app):
     @app.shell_context_processor
     def make_shell_context():
-        return dict(db=db,User=User,Help=Help,Order=Order,Note=Note,File=File)
+        return dict(db=db,User=User,Help=Help,Order=Order,Note=Note,File=File,Assisted=Assisted,Assistant=Assistant,datetime=datetime)
 
 
 

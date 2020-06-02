@@ -18,7 +18,7 @@ from werkzeug.security import check_password_hash
 
 assist_bp = Blueprint('assist',__name__)
 
-#@assist_bp.before_request   #!@#!@#
+@assist_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar']
     method = request.method
@@ -84,7 +84,7 @@ def apply():
         course_token = request.form.get('course_token')
         course = request.form.get('course')
         grade = request.form.get('grade')
-        complement = request.form.get('complement')
+
 
         token = str(id) + str(course) + str(grade)
 
@@ -93,6 +93,7 @@ def apply():
             results['msg'] = "成绩有误！"
 
         else :
+            complement = request.form.get('complement')
             cc = Couple.query.filter_by(user_id=id,be_user_id=user_id).first()
 
             if cc == None:
@@ -114,7 +115,7 @@ def apply():
                 results['code'] = 1
                 results['msg'] = '请勿重复申请'
 
-        return json.dumps(results)
+    return json.dumps(results)
 
 @assist_bp.route('/myassist',methods=['GET'])
 def myassist():
