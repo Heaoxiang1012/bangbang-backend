@@ -80,19 +80,30 @@ def get_msglist():
 
 
         for message in data1.values():
-            id = message.from_user_id
-            if id == current_user.id :
-                id = message.to_user_id
 
-            user = User.query.get(id)
+            if message.from_user_id != 0 :
+                id = message.from_user_id
+                if id == current_user.id :
+                    id = message.to_user_id
 
-            d = {
-                'user_id' : id,
-                'last_message' : message.content,
-                'date' : int(message.date.timestamp()),
-                'user_nickname' : user.nickname
-            }
-            data.append(d)
+                user = User.query.get(id)
+
+                d = {
+                    'user_id' : id,
+                    'last_message' : message.content,
+                    'date' : int(message.date.timestamp()),
+                    'user_nickname' : user.nickname
+                }
+                data.append(d)
+
+            else :
+                d = {
+                    'user_id': 0,
+                    'last_message': message.content,
+                    'date': int(message.date.timestamp()),
+                    'user_nickname': '系统消息'
+                }
+                data.append(d)
 
     results['code'] = 0
     results['msg'] = '返回成功'
@@ -108,36 +119,53 @@ def history():
     uid = current_user.id
     uuid = request.args.get('user_id')
 
-    user = User.query.get(uuid)
 
-    message1 = Message.query.filter_by(from_user_id=uid,to_user_id=uuid).order_by(Message.date.desc()).all()
-    message2 = Message.query.filter_by(from_user_id=uuid,to_user_id=uid).order_by(Message.date.desc()).all()
+    if uuid != 0 :
+        user = User.query.get(uuid)
+        message1 = Message.query.filter_by(from_user_id=uid,to_user_id=uuid).order_by(Message.date.desc()).all()
+        message2 = Message.query.filter_by(from_user_id=uuid,to_user_id=uid).order_by(Message.date.desc()).all()
 
-    for message in message1 :
-        d = {
-            'from_user_id' : message.from_user_id,
-            'to_user_id' : message.to_user_id,
-            'content' : message.content,
-            'date' :int(message.date.timestamp())
-        }
-        data.append(d)
+        for message in message1 :
+            d = {
+                'from_user_id' : message.from_user_id,
+                'to_user_id' : message.to_user_id,
+                'content' : message.content,
+                'date' :int(message.date.timestamp())
+            }
+            data.append(d)
 
-    for message in message2 :
-        d = {
-            'from_user_id' : message.from_user_id,
-            'to_user_id' : message.to_user_id,
-            'content' : message.content,
-            'date' : int(message.date.timestamp())
-        }
-        data.append(d)
+        for message in message2 :
+            d = {
+                'from_user_id' : message.from_user_id,
+                'to_user_id' : message.to_user_id,
+                'content' : message.content,
+                'date' : int(message.date.timestamp())
+            }
+            data.append(d)
 
-    for d in sorted(data,key= lambda s:s['date']):
-        Data.append(d)
+        for d in sorted(data,key= lambda s:s['date']):
+            Data.append(d)
 
-    results['code'] = 0
-    results['msg'] = '查看成功'
-    results['data'] = Data
-    results['user_nickname'] = user.nickname
+        results['code'] = 0
+        results['msg'] = '查看成功'
+        results['data'] = Data
+        results['user_nickname'] = user.nickname
+
+    else :
+        messages = Message.query.filter_by(from_user_id=0, to_user_id=uid).order_by(Message.date.desc()).all()
+        for message in messages :
+            d = {
+                'from_user_id' : message.from_user_id,
+                'to_user_id' : message.to_user_id,
+                'content' : message.content,
+                'date' :int(message.date.timestamp())
+            }
+            data.append(d)
+
+        results['code'] = 0
+        results['msg'] = '查看成功'
+        results['data'] = Data
+        results['user_nickname'] = '系统消息'
 
     return json.dumps(results)
 
