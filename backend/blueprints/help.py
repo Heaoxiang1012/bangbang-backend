@@ -12,7 +12,6 @@ from werkzeug.security import generate_password_hash,check_password_hash
 from ..utils import random_filename
 from flask_socketio import emit
 
-
 help_bp = Blueprint('help',__name__)
 
 #@help_bp.before_request   #!@#!@#
