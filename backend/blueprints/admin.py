@@ -80,7 +80,7 @@ def list():
     results = {}
     data = []
 
-    assists = Assisted.query.all()
+    assists = Assisted.query.filter_by(status=0).all()
 
     for assist in assists :
         be_user_id = assist.user_id
