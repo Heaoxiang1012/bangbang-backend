@@ -133,24 +133,25 @@ def myassist():
     results = {}
     data = []
 
-    assistant = Assistant.query.filter_by(user_id=current_user.id).first()
+    assistants = Assistant.query.filter_by(user_id=current_user.id).all()
 
-    if assistant != None:
-        couples = Couple.query.filter_by(user_id=assistant.id,status=1).all()
+    if assistants != None:
+        for assistant in assistants :
+            couples = Couple.query.filter_by(user_id=assistant.id,status=1).all()
 
-        if couples != None :
-            for couple in couples :
-                assisted = Assisted.query.get(couple.be_user_id)
+            if couples != None :
+                for couple in couples :
+                    assisted = Assisted.query.get(couple.be_user_id)
 
-                be_user = User.query.get(assisted.user_id)
+                    be_user = User.query.get(assisted.user_id)
 
-                d = {
-                    'couple_id' : couple.id,
-                    'assisted_nickname': be_user.nickname,
-                    'assisted_user_id' : be_user.id,
-                    'course' : assisted.course,
-                }
-                data.append(d)
+                    d = {
+                        'couple_id' : couple.id,
+                        'assisted_nickname': be_user.nickname,
+                        'assisted_user_id' : be_user.id,
+                        'course' : assisted.course,
+                    }
+                    data.append(d)
 
     results['code'] = 0
     results['msg'] = '查看成功'
