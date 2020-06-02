@@ -92,7 +92,7 @@ def my_published():
                 "content" : item.content[0:32] + '...' ,
                 "compliments" : item.compliments,
                 "flag" : flag,
-                "note_date" : item.note_date
+                "note_date" : item.note_date.strftime('%Y-%m-%d'),
             }
             data.append(d)
 
