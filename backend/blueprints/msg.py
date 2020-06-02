@@ -117,7 +117,7 @@ def history():
     data = []
     Data = []
     uid = current_user.id
-    uuid = request.args.get('user_id')
+    uuid = int(request.args.get('user_id'))
 
 
     if uuid != 0 :
