@@ -1,6 +1,7 @@
 import json
 import random
 import os
+from datetime import datetime
 
 from flask import Blueprint,request,send_from_directory,current_app
 from flask_login import current_user,login_user,logout_user
@@ -8,11 +9,13 @@ from flask_login import current_user,login_user,logout_user
 from ..models.user import User
 from ..models.assist import Assistant,Assisted,Couple
 from ..models.note import File
+from ..models.msg import Message
 
 from ..extensions import db
 from ..utils import check_register_form,send_mail,random_filename
 from ..util_verify import get_name
 from werkzeug.security import generate_password_hash
+from flask_socketio import emit,rooms
 
 admin_bp = Blueprint('admin',__name__)
 
@@ -60,14 +63,20 @@ def add_user():
     user = User.query.get(id)
 
     if user != None :
-        assist = Assisted(
-            user_id = user.id,
-            course = course,
-        )
-        db.session.add(assist)
-        db.session.commit()
-        results['code'] = 0
-        results['msg'] = '添加成功'
+        is_assist = Assisted.query.filter_by(user_id=user.id).first()
+        if is_assist != None and (is_assist.status == 0 or is_assist.status == 1 ):
+            results['code'] = 2
+            results['msg'] = '该用户已参与本次活动！'
+
+        else :
+            assist = Assisted(
+                user_id = user.id,
+                course = course,
+            )
+            db.session.add(assist)
+            db.session.commit()
+            results['code'] = 0
+            results['msg'] = '添加成功'
 
     else :
         results['code'] = 1
@@ -127,10 +136,36 @@ def approve():
     assisted = Assisted.query.get(be_user_id)
     assisted.status = 1
 
+    assistant = Assistant.query.get(couple.user_id)
+
     db.session.commit()
 
     results['code'] = 0
     results['msg'] = '批准成功'
+
+    data = {
+        'room': 0,
+        'content': '您的帮扶申请已被批准！',
+        'user_nickname': '系统消息'
+    }
+
+    server_results = {
+        'code': 0,
+        'msg': '发送成功',
+        'data': data,
+    }
+
+    msg = Message(
+        from_user_id= 0,
+        to_user_id=assistant.user_id,
+        date=datetime.today(),
+        content=server_results['content'],
+    )
+
+    db.session.add(msg)
+    db.session.commit()
+
+    emit('sendmsg', json.dumps(server_results), room=assistant.user_id, namespace='/chat')
 
     return json.dumps(results)
 
@@ -204,6 +239,13 @@ def reward():
 
     couple = Couple.query.get(couple_id)
     couple.status = 3
+
+    be_user_id = couple.be_user_id
+    assisted = Assisted.query.get(be_user_id)
+    assisted.status = 2 #本次帮扶已结束
+
+    assistant = Assistant.query.get(couple.user_id)
+
     charter = generate_password_hash(couple_id)
     couple.charter = charter
 
@@ -213,6 +255,30 @@ def reward():
 
     results['code'] = 0
     results['msg'] = '批准成功'
+
+    data = {
+        'room': 0,
+        'content': '您的综测申请已被批准！',
+        'user_nickname': '系统消息'
+    }
+
+    server_results = {
+        'code': 0,
+        'msg': '发送成功',
+        'data': data,
+    }
+
+    msg = Message(
+        from_user_id= 0,
+        to_user_id=assistant.user_id,
+        date=datetime.today(),
+        content=server_results['content'],
+    )
+
+    db.session.add(msg)
+    db.session.commit()
+
+    emit('sendmsg', json.dumps(server_results), room=assistant.user_id, namespace='/chat')
 
     return json.dumps(results)
 
