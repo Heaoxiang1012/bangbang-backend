@@ -14,7 +14,7 @@ from flask_socketio import emit
 
 help_bp = Blueprint('help',__name__)
 
-#@help_bp.before_request   #!@#!@#
+@help_bp.before_request   #!@#!@#
 def login_project():
     route = ['avatar']
     method = request.method
@@ -64,7 +64,7 @@ def release():
         help.file_id = file_id
         help.skill_name = skill_name
         help.type = True
-        help.user_id = 1#current_user.id
+        help.user_id = current_user.id
         db.session.add(help)
         db.session.commit()
 
