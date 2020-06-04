@@ -63,6 +63,7 @@ def release():
         skill_name = request.form.get('skill_name')
         help.file_id = file_id
         help.skill_name = skill_name
+        help.type = 'skill'
         db.session.add(help)
         db.session.commit()
 
