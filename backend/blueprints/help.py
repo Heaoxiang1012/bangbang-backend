@@ -64,6 +64,7 @@ def release():
         help.file_id = file_id
         help.skill_name = skill_name
         help.type = True
+        help.user_id = 1#current_user.id
         db.session.add(help)
         db.session.commit()
 
