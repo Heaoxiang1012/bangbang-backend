@@ -117,17 +117,17 @@ def glance(id):
     data = {
         "publisher_id": help.user_id,
         "type": type,
-        "name": help.major,
         "price": help.price,
         "declaration": help.declaration,
         "release_time": help.release_date.strftime('%Y-%m-%d'),
     }
 
     if help.type == True :
-        pass
+        data['name'] = help.skill_name
 
     else :
         data["course_score"] = help.grade
+        data['name'] = help.major
 
     results['code'] = 0
     results['msg'] = '查看成功'
