@@ -152,21 +152,23 @@ def search():
                 if i in help.major:
                     if help not in Data :
                         type = 'course'
-                        if help.type == True :
-                            type = 'skill'
 
                         d = {
                             "publisher_id": help.user_id,
                             "help_id": help.id,
                             'publisher_nickname' : help.user.nickname,
-                            'type' : type,
-                            'name'  : help.major,
                             'price' : help.price,
                             'declaration' : help.declaration,
                         }
 
+                        if help.type == True :
+                            d['type'] = 'skill'
+                            d['name'] = help.skill_name
+
                         if help.type == False :
                             d['course_score'] = help.grade
+                            d['type'] = 'course'
+                            d['name'] = help.major
 
                         Data.append(help)
                         data.append(d)
@@ -192,11 +194,12 @@ def released():
             d['publisher_name'] = help.user.nickname
             if help.type == True:
                 d['type'] = 'skill'
+                d['name'] = help.skill_name
             else :
                 d['type'] = 'course'
                 d['course_score'] = help.grade
+                d['name'] = help.major
 
-            d['name'] = help.major
             d['declaration'] = help.declaration
             d['release_time'] =help.release_date.strftime('%Y-%m-%d')
             data.append(d)
@@ -275,7 +278,13 @@ def booklist():
     for help in helps:
         d = {}
         d['help_id'] = help.id
-        d['name'] = help.major
+
+        if help.type == False:
+            d['name'] = help.major
+
+        else :
+            d['name'] = help.skill_name
+
         orders = help.orders
         book_name = []
         for item in orders :
@@ -306,20 +315,22 @@ def record():
     for order in orders:
         help = order.help
         if help!=None and order.state == True:
-            type = 'course'
-            if type == True:
-                type = 'skill'
             d = {
-                "help_id" : help.id,
-                "publisher_nickname" : help.user.nickname,
+                "help_id": help.id,
+                "publisher_nickname": help.user.nickname,
                 "publisher_id": help.user.id,
-                "order_id" : order.id,
-                "type" : type,
-                "name" : help.major,
-                "price" : help.price,
-                "release_time" : help.release_date.strftime('%Y-%m-%d'),
-                "is_pay" : order.is_pay
+                "order_id": order.id,
+                "price": help.price,
+                "release_time": help.release_date.strftime('%Y-%m-%d'),
+                "is_pay": order.is_pay
             }
+            if help.type == True:
+                type = 'skill'
+                d['name'] = help.skill_name
+                d['type'] = type
+            else :
+                d['name'] = help.major
+                d['type'] = 'course'
 
             data.append(d)
     results['code'] = 0
@@ -470,14 +481,16 @@ def index():
             d["publisher_id"] = help.user_id
             d["publisher_nickname"] = help.user.nickname
             d["help_id"] = help.id
-            d["name"] = help.major
             d["release_time"] = help.release_date.strftime('%Y-%m-%d')
             d["declaration"] = help.declaration
+
             if help.type == False:
                 d["course_score"] = help.grade
                 d['type'] = 'course'
+                d["name"] = help.major
             else :
                 d['type'] = 'skill'
+                d['name'] = help.skill_name
 
             data.append(d)
 
